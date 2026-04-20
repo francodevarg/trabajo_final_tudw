@@ -1,0 +1,76 @@
+services:
+  django_backend:
+    build:
+      context: ..
+      dockerfile: config/Dockerfile
+      target: ${BUILD_TARGET:-development}   # 🔥 dinámico dev/prod
+      args:
+        UID: ${LOCAL_UID:-1000}
+        GID: ${LOCAL_GID:-1000}
+        USERNAME: ${DEVCONTAINER_USER:-vscode}
+
+    container_name: django_backend
+    restart: unless-stopped
+
+    volumes:
+      - ..:/workspace:cached
+      - venv_data:/workspace/.venv
+
+    ports:
+      - "${APP_PORT:-8000}:8000"
+
+    networks:
+      - django_ntw
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    env_file:
+      - ../src/.env
+
+    environment:
+      DJANGO_DIR: ${DJANGO_DIR:-/workspace/src}
+      APP_MODE: ${APP_MODE:-dev}   # 🔥 clave
+
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+
+    entrypoint: ["/workspace/config/entrypoint.sh"]
+
+    command: ["${APP_MODE:-dev}"]   # 🔥 ahora dinámico
+
+    stdin_open: true
+    tty: true
+
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-django_db}
+      POSTGRES_USER: ${POSTGRES_USER:-django_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-django_pass}
+
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - django_ntw
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-django_user} -d ${POSTGRES_DB:-django_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  django_ntw:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  venv_data:

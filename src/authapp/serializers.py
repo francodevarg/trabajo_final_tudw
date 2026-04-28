@@ -34,7 +34,7 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
 
         # Un solo grupo
         group = user.groups.first()
-        token['role'] = group.name if group else None
+        token['group'] = group.name if group else None
 
         # Permisos efectivos (incluye los del grupo)
         token['permissions'] = list(user.get_all_permissions())

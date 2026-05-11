@@ -6,7 +6,24 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 class SpecialtySerializer(serializers.ModelSerializer):
     class Meta:
         model = Specialty
-        fields = ["name"]  
+        fields = ["id", "name"]
+
+    def validate_name(self, value):
+        value = value.strip()
+
+        if not value:
+            raise serializers.ValidationError({
+                "code": "NAME_REQUIRED",
+                "message": "Name is required"
+            })
+
+        if Specialty.objects.filter(name=value).exists():
+            raise serializers.ValidationError({
+                "code": "SPECIALTY_ALREADY_EXISTS",
+                "message": "Specialty already exists"
+            })
+
+        return value
 
 class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,7 +34,6 @@ class AvailabilitySerializer(serializers.ModelSerializer):
 
 class DoctorSerializer(serializers.ModelSerializer):
     availabilities = AvailabilitySerializer(many=True)
-    specialty = SpecialtySerializer()  # Incluir el serializer de especialidad
     class Meta:
         model = Doctor
         fields = ["id", "name", "email", "specialty", "phone", "availabilities"]

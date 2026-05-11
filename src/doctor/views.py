@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Doctor, Specialty
-from .serializers import DoctorSerializer
+from .serializers import DoctorSerializer, SpecialtySerializer
 from .permissions import IsAdminRole
 
 
@@ -41,8 +41,17 @@ class DoctorDetailView(APIView):
 
 
 class SpecialtyListView(APIView):
-    # permission_classes = [IsAuthenticated, IsAdminRole]
+    permission_classes = [IsAuthenticated, IsAdminRole]
 
     def get(self, request):
         specialties = Specialty.objects.all().values('id', 'name')
         return Response(specialties, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        serializer = SpecialtySerializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+
+        return Response(serializer.data, status=201)

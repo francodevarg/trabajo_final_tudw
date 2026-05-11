@@ -2,29 +2,80 @@ from django.contrib.auth.models import Group, User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from authapp.models import Profile
+from django.contrib.auth.models import User
+
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+
     email = serializers.EmailField(required=True)
+
+    group = serializers.CharField(write_only=True)
+
+    ALLOWED_REGISTER_GROUPS = [
+        'PATIENT',
+        'DOCTOR',
+        'ADMIN'
+    ]
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+
+        fields = [
+            'email',
+            'group'
+        ]
+
+    def validate_email(self, value):
+
+        if User.objects.filter(email=value).exists():
+
+            raise serializers.ValidationError(
+                'Email already exists.'
+            )
+
+        return value
+
+    def validate_group(self, value):
+
+        if value not in self.ALLOWED_REGISTER_GROUPS:
+
+            raise serializers.ValidationError(
+                'Invalid group.'
+            )
+
+        if not Group.objects.filter(name=value).exists():
+
+            raise serializers.ValidationError(
+                'Group does not exist.'
+            )
+
+        return value
 
     def create(self, validated_data):
+
+        group_name = validated_data.pop('group')
+
         user = User.objects.create_user(
-            username=validated_data['email'], # Usamos el email como username
-            email=validated_data['email'],
-            password=validated_data['password']
+            username=validated_data['email'],
+            email=validated_data['email']
         )
-        Profile.objects.create(user=user, phone_number="", date_of_birth=None, address="")
-        
-        
-        # Asignar grupo "PATIENT" por regla de negocio
-        group, created = Group.objects.get_or_create(name='PATIENT')
+
+        user.set_unusable_password()
+
+        user.save()
+
+        Profile.objects.create(
+            user=user,
+            phone_number='',
+            date_of_birth=None,
+            address=''
+        )
+
+        group = Group.objects.get(name=group_name)
+
         user.groups.add(group)
+
         return user
-    
 
 class CustomTokenSerializer(TokenObtainPairSerializer):
 
@@ -40,3 +91,24 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         token['permissions'] = list(user.get_all_permissions())
 
         return token
+    
+
+class RequestOTPSerializer(serializers.Serializer):
+
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                'User with this email does not exist.'
+            )
+
+        return value
+
+
+class VerifyOTPSerializer(serializers.Serializer):
+
+    email = serializers.EmailField()
+
+    otp = serializers.CharField(max_length=6)

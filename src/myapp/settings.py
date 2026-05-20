@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     
     # Local Apps
+    'myapp',
     'authapp',
     'doctor'
 ]

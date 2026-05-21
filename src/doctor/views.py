@@ -9,7 +9,6 @@ from .permissions import IsAdminRole
 
 
 class DoctorListView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminRole]
 
     def get(self, request):
         doctors = Doctor.objects.all()

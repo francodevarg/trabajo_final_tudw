@@ -34,9 +34,8 @@ class AvailabilitySerializer(serializers.ModelSerializer):
 
 class DoctorSerializer(serializers.ModelSerializer):
 
-    email = serializers.EmailField(write_only=True)
-    name = serializers.CharField(write_only=True)
-
+    name = serializers.CharField(source="user.first_name", read_only=True)
+    
     specialty = serializers.StringRelatedField(read_only=True)
 
     specialty_id = serializers.PrimaryKeyRelatedField(
@@ -70,7 +69,6 @@ class DoctorSerializer(serializers.ModelSerializer):
 
             # USER DATA
             "name",
-            "email",
 
             # READ
             "specialty",
@@ -86,8 +84,8 @@ class DoctorSerializer(serializers.ModelSerializer):
             "consultation_fee",
             "is_active",
             "availabilities",
-            "created_at",
-            "updated_at",
+            # "created_at",
+            # "updated_at",
         ]
 
         read_only_fields = [

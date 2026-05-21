@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from doctor.models import Availability, Doctor, Specialty
+from doctor.models import Availability, Doctor,Specialty, Insurance
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
 
+User = get_user_model()
 
 class SpecialtySerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,63 +32,118 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         model = Availability
         fields = ["day_of_week", "start_time", "end_time"]
 
-
-
 class DoctorSerializer(serializers.ModelSerializer):
-    availabilities = AvailabilitySerializer(many=True)
+
+    email = serializers.EmailField(write_only=True)
+    name = serializers.CharField(write_only=True)
+
+    specialty = serializers.StringRelatedField(read_only=True)
+
+    specialty_id = serializers.PrimaryKeyRelatedField(
+        queryset=Specialty.objects.all(),
+        source="specialty",
+        write_only=True
+    )
+
+    insurances = serializers.StringRelatedField(
+        many=True,
+        read_only=True
+    )
+
+    insurance_ids = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Insurance.objects.all(),
+        source="insurances",
+        write_only=True,
+        required=False
+    )
+
+    availabilities = AvailabilitySerializer(
+        many=True,
+        required=False
+    )
+
     class Meta:
         model = Doctor
-        fields = ["id", "name", "email", "specialty", "phone", "availabilities"]
+        fields = [
+            "id",
 
+            # USER DATA
+            "name",
+            "email",
+
+            # READ
+            "specialty",
+            "insurances",
+
+            # WRITE
+            "specialty_id",
+            "insurance_ids",
+
+            "license_number",
+            "phone",
+            "description",
+            "consultation_fee",
+            "is_active",
+            "availabilities",
+            "created_at",
+            "updated_at",
+        ]
+
+        read_only_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+        ]
     def validate_availabilities(self, value):
         errors = []
 
-        # validar start < end
+        # 1. Validar rangos inválidos
         for i, a in enumerate(value):
             if a["start_time"] >= a["end_time"]:
                 errors.append({
                     "code": "INVALID_TIME_RANGE",
                     "field": "availabilities",
                     "index": i,
-                    "meta": {
-                        "start_time": a["start_time"],
-                        "end_time": a["end_time"]
-                    }
                 })
 
-        # validar solapamientos internos
-        seen = set()
+        # 2. Agrupar por día
+        by_day = {}
 
-        for i in range(len(value)):
-            for j in range(i + 1, len(value)):
-                a = value[i]
-                b = value[j]
+        for i, a in enumerate(value):
+            day = a["day_of_week"]
 
-                if (
-                    a["day_of_week"] == b["day_of_week"] and
-                    a["start_time"] < b["end_time"] and
-                    a["end_time"] > b["start_time"]
-                ):
-                    key = (i, j)
-                    if key not in seen:
-                        errors.append({
-                            "code": "OVERLAPPING_AVAILABILITY",
-                            "field": "availabilities",
-                            "index": i,
-                            "meta": {
-                                "conflicts_with_index": j,
-                                "day_of_week": a["day_of_week"],
-                                "range_1": {
-                                    "start": a["start_time"],
-                                    "end": a["end_time"]
-                                },
-                                "range_2": {
-                                    "start": b["start_time"],
-                                    "end": b["end_time"]
-                                }
-                            }
-                        })
-                        seen.add(key)
+            if day not in by_day:
+                by_day[day] = []
+
+            by_day[day].append({
+                "index": i,
+                "start_time": a["start_time"],
+                "end_time": a["end_time"],
+            })
+
+        # 3. Ordenar y comparar solo vecinos
+        for day, availabilities in by_day.items():
+
+            # O(n log n)
+            availabilities.sort(key=lambda x: x["start_time"])
+
+            # O(n)
+            for i in range(len(availabilities) - 1):
+                current = availabilities[i]
+                next_one = availabilities[i + 1]
+
+                overlaps = (
+                    current["end_time"] > next_one["start_time"]
+                )
+
+                if overlaps:
+                    errors.append({
+                        "code": "OVERLAPPING_AVAILABILITY",
+                        "field": "availabilities",
+                        "index": current["index"],
+                        "conflicts_with": next_one["index"],
+                    })
 
         if errors:
             raise serializers.ValidationError(errors)
@@ -94,13 +151,39 @@ class DoctorSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        availabilities_data = validated_data.pop("availabilities")
 
-        doctor = Doctor.objects.create(**validated_data)
+        availabilities_data = validated_data.pop("availabilities", [])
+        insurances_data = validated_data.pop("insurances", [])
 
-        Availability.objects.bulk_create([
-            Availability(doctor=doctor, **availability_data)
-            for availability_data in availabilities_data
-        ])
+        email = validated_data.pop("email")
+        name = validated_data.pop("name")
+
+        user = User.objects.create(
+            username=email,
+            email=email,
+            first_name=name,
+        )
+
+        doctor = Doctor.objects.create(
+            user=user,
+            **validated_data
+        )
+
+        if insurances_data:
+            doctor.insurances.set(insurances_data)
+
+        availability_objects = []
+
+        for availability_data in availabilities_data:
+            availability = Availability(
+                doctor=doctor,
+                **availability_data
+            )
+
+            availability.clean()
+
+            availability_objects.append(availability)
+
+        Availability.objects.bulk_create(availability_objects)
 
         return doctor

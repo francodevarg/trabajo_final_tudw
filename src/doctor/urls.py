@@ -4,7 +4,7 @@ from doctor.views import DoctorDetailView, DoctorListView, SpecialtyListView
 
 urlpatterns = [
     path('', DoctorListView.as_view()),
-    path("<int:pk>/", DoctorDetailView.as_view()),  # obtiene a un doctor por id
+    path("<int:pk>", DoctorDetailView.as_view()),  # obtiene a un doctor por id
     # path("<int:pk>/availability", DoctorDetailView.as_view()),
     path("specialties", SpecialtyListView.as_view()),  
     # path('create/', Create.as_view()),   # obtiene a

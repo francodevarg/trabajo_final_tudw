@@ -44,7 +44,7 @@ class SpecialtyListView(APIView):
     permission_classes = [IsAuthenticated, IsAdminRole]
 
     def get(self, request):
-        specialties = Specialty.objects.all().values('id', 'name')
+        specialties = Specialty.objects.all().values('id', 'name', 'slug')
         return Response(specialties, status=status.HTTP_200_OK)
     
     def post(self, request):

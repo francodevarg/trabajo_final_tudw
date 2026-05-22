@@ -4,39 +4,71 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Doctor, Specialty
-from .serializers import DoctorSerializer, SpecialtySerializer
+from .serializers import SpecialtySerializer
 from .permissions import IsAdminRole
+from rest_framework.permissions import AllowAny
 
 
-class DoctorListView(APIView):
+from doctor.serializers import (
+    DoctorReadSerializer,
+    DoctorCreateSerializer,
+)
+
+class DoctorListCreateView(APIView):
+    def get_permissions(self):
+
+        if self.request.method == "POST":
+            return [
+                IsAuthenticated(),
+                IsAdminRole(),
+            ]
+
+        return [AllowAny()]
+    
+    def get_serializer_class(self):
+
+        if self.request.method == "POST":
+            return DoctorCreateSerializer
+
+        return DoctorReadSerializer
 
     def get(self, request):
-        doctors = Doctor.objects.all()
-        serializer = DoctorSerializer(doctors, many=True)
+
+        doctors = Doctor.objects.prefetch_related(
+            "insurances",
+            "availabilities",
+        ).select_related(
+            "user",
+            "specialty",
+        )
+
+        serializer = self.get_serializer_class()(
+            doctors,
+            many=True
+        )
+
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     def post(self, request):
-        serializer = DoctorSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class DoctorDetailView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminRole]
 
-    def get_object(self, pk):
-        try:
-            return Doctor.objects.get(pk=pk)
-        except Doctor.DoesNotExist:
-            return None
+        serializer = self.get_serializer_class()(
+            data=request.data
+        )
 
-    def get(self, request, pk):
-        doctor = self.get_object(pk)
-        if doctor is None:
-            return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = DoctorSerializer(doctor)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer.is_valid(
+            raise_exception=True
+        )
+
+        doctor = serializer.save()
+
+        response_serializer = DoctorReadSerializer(
+            doctor
+        )
+
+        return Response(
+            response_serializer.data,
+            status=status.HTTP_201_CREATED
+        )
 
 
 class SpecialtyListView(APIView):

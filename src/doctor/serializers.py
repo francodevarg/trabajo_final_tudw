@@ -32,21 +32,54 @@ class AvailabilitySerializer(serializers.ModelSerializer):
         model = Availability
         fields = ["day_of_week", "start_time", "end_time"]
 
-class DoctorSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(source="user.first_name", read_only=True)
-    
-    specialty = serializers.StringRelatedField(read_only=True)
+class DoctorReadSerializer(serializers.ModelSerializer):
 
+    name = serializers.CharField(
+        source="user.first_name",
+        read_only=True
+    )
+
+    specialty = serializers.StringRelatedField()
+
+    insurances = serializers.StringRelatedField(
+        many=True
+    )
+
+    availabilities = AvailabilitySerializer(
+        many=True
+    )
+
+    class Meta:
+        model = Doctor
+        fields = [
+            "id",
+            "name",
+            "specialty",
+            "insurances",
+            "license_number",
+            "phone",
+            "description",
+            "consultation_fee",
+            "is_active",
+            "availabilities",
+        ]
+
+
+class DoctorCreateSerializer(serializers.ModelSerializer):
+
+    # USER DATA
+    email = serializers.EmailField(write_only=True)
+
+    name = serializers.CharField(
+        write_only=True
+    )
+
+    # RELATIONS
     specialty_id = serializers.PrimaryKeyRelatedField(
         queryset=Specialty.objects.all(),
         source="specialty",
         write_only=True
-    )
-
-    insurances = serializers.StringRelatedField(
-        many=True,
-        read_only=True
     )
 
     insurance_ids = serializers.PrimaryKeyRelatedField(
@@ -57,6 +90,7 @@ class DoctorSerializer(serializers.ModelSerializer):
         required=False
     )
 
+    # NESTED
     availabilities = AvailabilitySerializer(
         many=True,
         required=False
@@ -65,16 +99,9 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = [
-            "id",
-
-            # USER DATA
+            "email",
             "name",
 
-            # READ
-            "specialty",
-            "insurances",
-
-            # WRITE
             "specialty_id",
             "insurance_ids",
 
@@ -82,17 +109,9 @@ class DoctorSerializer(serializers.ModelSerializer):
             "phone",
             "description",
             "consultation_fee",
-            "is_active",
             "availabilities",
-            # "created_at",
-            # "updated_at",
         ]
 
-        read_only_fields = [
-            "id",
-            "created_at",
-            "updated_at",
-        ]
     def validate_availabilities(self, value):
         errors = []
 
@@ -150,29 +169,41 @@ class DoctorSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
-        availabilities_data = validated_data.pop("availabilities", [])
-        insurances_data = validated_data.pop("insurances", [])
+        availabilities_data = validated_data.pop(
+            "availabilities",
+            []
+        )
+
+        insurances_data = validated_data.pop(
+            "insurances",
+            []
+        )
 
         email = validated_data.pop("email")
         name = validated_data.pop("name")
 
+        # Create user
         user = User.objects.create(
             username=email,
             email=email,
             first_name=name,
         )
 
+        # Create doctor
         doctor = Doctor.objects.create(
             user=user,
             **validated_data
         )
 
+        # M2M
         if insurances_data:
             doctor.insurances.set(insurances_data)
 
+        # Bulk availabilities
         availability_objects = []
 
         for availability_data in availabilities_data:
+
             availability = Availability(
                 doctor=doctor,
                 **availability_data
@@ -180,8 +211,12 @@ class DoctorSerializer(serializers.ModelSerializer):
 
             availability.clean()
 
-            availability_objects.append(availability)
+            availability_objects.append(
+                availability
+            )
 
-        Availability.objects.bulk_create(availability_objects)
+        Availability.objects.bulk_create(
+            availability_objects
+        )
 
         return doctor

@@ -14,7 +14,7 @@ class Command(BaseCommand):
         groups = [
             "ADMIN",
             "DOCTOR",
-            "PATIENT",
+            "CONTACT",
         ]
 
         for group_name in groups:

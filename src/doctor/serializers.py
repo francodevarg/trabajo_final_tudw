@@ -1,7 +1,17 @@
 from rest_framework import serializers
-from doctor.models import Availability, Doctor,Specialty, Insurance
+from doctor.models import Availability, Doctor, Specialty, Insurance
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
+
+
+class NextAvailableSlotSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    time = serializers.TimeField(format="%H:%M")
+
+
+class AvailableSlotSerializer(serializers.Serializer):
+    time = serializers.TimeField(format="%H:%M")
+    available = serializers.BooleanField()
 
 User = get_user_model()
 
@@ -75,7 +85,6 @@ class DoctorCreateSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
-    # RELATIONS
     specialty_id = serializers.PrimaryKeyRelatedField(
         queryset=Specialty.objects.all(),
         source="specialty",
@@ -90,7 +99,6 @@ class DoctorCreateSerializer(serializers.ModelSerializer):
         required=False
     )
 
-    # NESTED
     availabilities = AvailabilitySerializer(
         many=True,
         required=False
@@ -195,7 +203,7 @@ class DoctorCreateSerializer(serializers.ModelSerializer):
             **validated_data
         )
 
-        # M2M
+
         if insurances_data:
             doctor.insurances.set(insurances_data)
 

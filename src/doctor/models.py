@@ -80,6 +80,10 @@ class Doctor(models.Model):
 
     updated_at = models.DateTimeField(auto_now=True)
     
+    appointment_duration = models.PositiveIntegerField(
+        default=30
+    )
+    
 class Availability(models.Model):
     WEEK_DAYS = [
         (0, "Monday"),

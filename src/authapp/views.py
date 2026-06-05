@@ -31,7 +31,7 @@ class RequestOTPView(APIView):
 
         email = serializer.validated_data['email']
 
-        user = User.objects.get(email=email)
+        user, created = User.objects.get_or_create(email=email)
 
         OTPService.create_otp_for_user(user)
 

@@ -4,3 +4,4 @@ django-rest-auth
 djangorestframework
 djangorestframework-simplejwt
 python-dotenv
+django-cors-headers

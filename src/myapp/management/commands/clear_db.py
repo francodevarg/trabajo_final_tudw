@@ -9,6 +9,8 @@ from doctor.models import (
     Specialty,
     Insurance,
 )
+from appointments.models import Appointment
+from patients.models import Patient
 
 User = get_user_model()
 
@@ -24,12 +26,11 @@ class Command(BaseCommand):
             self.style.WARNING("Clearing database...")
         )
 
+        Appointment.objects.all().delete()
         Availability.objects.all().delete()
-
+        Patient.objects.all().delete()
         Doctor.objects.all().delete()
-
         Specialty.objects.all().delete()
-
         Insurance.objects.all().delete()
 
         Group.objects.all().delete()

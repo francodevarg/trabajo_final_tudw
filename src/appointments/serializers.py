@@ -41,7 +41,22 @@ class AppointmentSerializer(serializers.ModelSerializer):
         patient_data = validated_data.pop("patient")
 
         doctor = Doctor.objects.get(id=doctor_data["id"])
-        patient = Patient.objects.get_or_create(dni=patient_data["dni"])[0]
+        patient, created = Patient.objects.get_or_create(
+            dni=patient_data["dni"],
+            defaults={
+                "first_name": patient_data.get("first_name"),
+                "last_name": patient_data.get("last_name"),
+                "sex": patient_data.get("sex"),
+                "date_of_birth": patient_data.get("date_of_birth"),
+            }
+        )
+
+        if not created:
+            patient.first_name = patient_data.get("first_name")
+            patient.last_name = patient_data.get("last_name")
+            patient.sex = patient_data.get("sex")
+            patient.date_of_birth = patient_data.get("date_of_birth")
+            patient.save()
 
         return Appointment.objects.create(
             doctor=doctor,

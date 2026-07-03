@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from rest_framework import serializers
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from django.shortcuts import get_object_or_404
 
 from .models import Doctor, Specialty
@@ -121,18 +123,31 @@ class DoctorListCreateView(APIView):
         )
 
 
-class SpecialtyListView(APIView):
+class SpecialtyListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
+    queryset = Specialty.objects.all()
+    serializer_class = SpecialtySerializer
     permission_classes = [IsAuthenticated, IsAdminRole]
 
-    def get(self, request):
-        specialties = Specialty.objects.all().values('id', 'name', 'slug')
-        return Response(specialties, status=status.HTTP_200_OK)
-    
-    def post(self, request):
-        serializer = SpecialtySerializer(data=request.data)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-        serializer.is_valid(raise_exception=True)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
-        serializer.save()
 
-        return Response(serializer.data, status=201)
+class SpecialtyDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+    queryset = Specialty.objects.all()
+    serializer_class = SpecialtySerializer
+    permission_classes = [IsAuthenticated, IsAdminRole]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

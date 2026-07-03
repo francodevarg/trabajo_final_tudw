@@ -18,7 +18,7 @@ User = get_user_model()
 class SpecialtySerializer(serializers.ModelSerializer):
     class Meta:
         model = Specialty
-        fields = ["id", "name"]
+        fields = ["id", "name","slug"]
 
     def validate_name(self, value):
         value = value.strip()
@@ -29,7 +29,12 @@ class SpecialtySerializer(serializers.ModelSerializer):
                 "message": "Name is required"
             })
 
-        if Specialty.objects.filter(name=value).exists():
+        queryset = Specialty.objects.filter(name=value)
+
+        if self.instance:
+            queryset = queryset.exclude(pk=self.instance.pk)
+
+        if queryset.exists():
             raise serializers.ValidationError({
                 "code": "SPECIALTY_ALREADY_EXISTS",
                 "message": "Specialty already exists"

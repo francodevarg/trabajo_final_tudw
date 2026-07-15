@@ -2,9 +2,9 @@ import random
 from datetime import timedelta
 
 from django.contrib.auth.hashers import check_password, make_password
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.utils import timezone
-
+from myapp.services.email_service import EmailService
 from authapp.models import OTPCode
 
 
@@ -35,13 +35,7 @@ class OTPService:
 
     @staticmethod
     def send_otp_email(email, otp):
-
-        send_mail(
-            subject='Your OTP Code',
-            message=f'Your OTP code is: {otp}',
-            from_email=None,
-            recipient_list=[email],
-        )
+      EmailService.send_otp_email(email, otp, OTPService.OTP_EXPIRATION_MINUTES)
 
     @staticmethod
     def validate_otp(user, code):

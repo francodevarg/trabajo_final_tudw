@@ -11,8 +11,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from django.shortcuts import get_object_or_404
 
-from .models import Doctor, Specialty
-from .serializers import SpecialtySerializer, NextAvailableSlotSerializer, AvailableSlotSerializer
+from .models import Doctor, Specialty, Insurance
+from .serializers import SpecialtySerializer, InsuranceSerializer, NextAvailableSlotSerializer, AvailableSlotSerializer
 from .permissions import IsAdminRole
 from .services import SlotService
 from rest_framework.permissions import AllowAny
@@ -21,6 +21,7 @@ from rest_framework.permissions import AllowAny
 from doctor.serializers import (
     DoctorReadSerializer,
     DoctorCreateSerializer,
+    DoctorUpdateSerializer,
 )
 
 
@@ -66,27 +67,20 @@ class DoctorViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
-class DoctorListCreateView(APIView):
-    def get_permissions(self):
+class DoctorListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
 
-        if self.request.method == "POST":
-            return [
-                IsAuthenticated(),
-                IsAdminRole(),
-            ]
-
-        return [AllowAny()]
-    
     def get_serializer_class(self):
-
         if self.request.method == "POST":
             return DoctorCreateSerializer
-
         return DoctorReadSerializer
 
-    def get(self, request):
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAuthenticated(), IsAdminRole()]
+        return [AllowAny()]
 
-        doctors = Doctor.objects.prefetch_related(
+    def get_queryset(self):
+        return Doctor.objects.prefetch_related(
             "insurances",
             "availabilities",
         ).select_related(
@@ -94,33 +88,68 @@ class DoctorListCreateView(APIView):
             "specialty",
         )
 
-        serializer = self.get_serializer_class()(
-            doctors,
-            many=True
-        )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
-    def post(self, request):
-
-        serializer = self.get_serializer_class()(
-            data=request.data
-        )
-
-        serializer.is_valid(
-            raise_exception=True
-        )
-
+    def perform_create(self, serializer):
         doctor = serializer.save()
+        read_serializer = DoctorReadSerializer(doctor)
+        self.created_data = read_serializer.data
 
-        response_serializer = DoctorReadSerializer(
-            doctor
-        )
-
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
         return Response(
-            response_serializer.data,
+            self.created_data,
             status=status.HTTP_201_CREATED
         )
+
+
+class DoctorDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+    permission_classes = [IsAuthenticated, IsAdminRole]
+
+    def get_serializer_class(self):
+        if self.request.method in ("PUT", "PATCH"):
+            return DoctorUpdateSerializer
+        return DoctorReadSerializer
+
+    def get_queryset(self):
+        return Doctor.objects.prefetch_related(
+            "insurances",
+            "availabilities",
+        ).select_related(
+            "user",
+            "specialty",
+        )
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        doctor = serializer.save()
+        read_serializer = DoctorReadSerializer(doctor)
+        self.updated_data = read_serializer.data
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(self.updated_data)
 
 
 class SpecialtyListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
@@ -138,6 +167,36 @@ class SpecialtyListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
 class SpecialtyDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
     queryset = Specialty.objects.all()
     serializer_class = SpecialtySerializer
+    permission_classes = [IsAuthenticated, IsAdminRole]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class InsuranceListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
+    queryset = Insurance.objects.all()
+    serializer_class = InsuranceSerializer
+    permission_classes = [IsAuthenticated, IsAdminRole]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class InsuranceDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
+    queryset = Insurance.objects.all()
+    serializer_class = InsuranceSerializer
     permission_classes = [IsAuthenticated, IsAdminRole]
 
     def get(self, request, *args, **kwargs):

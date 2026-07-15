@@ -90,6 +90,10 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         # Permisos efectivos (incluye los del grupo)
         token['permissions'] = list(user.get_all_permissions())
 
+        token['email'] = user.email
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
+
         return token
     
 

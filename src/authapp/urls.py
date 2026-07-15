@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView,
+    TokenBlacklistView
 )
 
 from authapp.views import RegisterView, RequestOTPView, VerifyOTPView
@@ -12,4 +13,5 @@ urlpatterns = [
     path('register', RegisterView.as_view()),       # registro de usuario
     path('request-otp', RequestOTPView.as_view()),  # solicitud de OTP
     path('verify-otp', VerifyOTPView.as_view()),    # verificación de OTP
+    path("logout", TokenBlacklistView.as_view()),   # logout     
 ]

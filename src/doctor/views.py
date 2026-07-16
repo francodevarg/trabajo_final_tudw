@@ -15,6 +15,7 @@ from .models import Doctor, Specialty, Insurance
 from .serializers import SpecialtySerializer, InsuranceSerializer, NextAvailableSlotSerializer, AvailableSlotSerializer
 from .permissions import IsAdminRole
 from .services import SlotService
+from myapp.services.email_service import EmailService
 from rest_framework.permissions import AllowAny
 
 
@@ -96,6 +97,10 @@ class DoctorListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
 
     def perform_create(self, serializer):
         doctor = serializer.save()
+        try:
+            EmailService.send_doctor_welcome_email(doctor)
+        except Exception:
+            pass
         read_serializer = DoctorReadSerializer(doctor)
         self.created_data = read_serializer.data
 

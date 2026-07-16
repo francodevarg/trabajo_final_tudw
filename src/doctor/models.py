@@ -84,6 +84,12 @@ class Doctor(models.Model):
         default=30
     )
     
+    def __str__(self):
+        return (
+            f"{self.user.first_name} "
+            f"{self.user.last_name}"
+        )
+    
 class Availability(models.Model):
     WEEK_DAYS = [
         (0, "Monday"),

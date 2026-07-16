@@ -1,46 +1,125 @@
 from rest_framework import serializers
+
 from .models import Appointment
 from doctor.models import Doctor
 from patients.models import Patient
 from myapp.services.email_service import EmailService
 
+
+class AppointmentDoctorSerializer(serializers.Serializer):
+    id = serializers.PrimaryKeyRelatedField(
+        queryset=Doctor.objects.all()
+    )
+
+
+class AppointmentPatientSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=100)
+    last_name = serializers.CharField(max_length=100)
+    dni = serializers.CharField(max_length=20)
+    sex = serializers.ChoiceField(
+        choices=Patient.SexChoices.choices
+    )
+    date_of_birth = serializers.DateField()
+
+
+class AppointmentDoctorReadSerializer(serializers.ModelSerializer):
+
+    first_name = serializers.CharField(
+        source="user.first_name",
+        read_only=True,
+    )
+
+    last_name = serializers.CharField(
+        source="user.last_name",
+        read_only=True,
+    )
+
+    specialty = serializers.CharField(
+        source="specialty.name",
+        read_only=True,
+    )
+
+    class Meta:
+        model = Doctor
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "specialty",
+            "license_number",
+        )
+
+
+class AppointmentPatientReadSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Patient
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "dni",
+        )
+
+
 class AppointmentSerializer(serializers.ModelSerializer):
-    doctor = serializers.DictField(write_only=True)
-    patient = serializers.DictField(write_only=True)
+
+    # POST / PATCH
+    doctor = AppointmentDoctorSerializer(
+        write_only=True
+    )
+
+    patient = AppointmentPatientSerializer(
+        write_only=True
+    )
+
+
+    # GET
+    doctor_detail = AppointmentDoctorReadSerializer(
+        source="doctor",
+        read_only=True,
+    )
+
+    patient_detail = AppointmentPatientReadSerializer(
+        source="patient",
+        read_only=True,
+    )
+
 
     class Meta:
         model = Appointment
+
         fields = (
             "id",
             "doctor",
             "patient",
+            "doctor_detail",
+            "patient_detail",
             "date",
             "time",
             "status",
             "notes",
+            "created_at",
+            "updated_at",
         )
-        read_only_fields = ("status",)
 
-    def get_doctor_detail(self, obj):
-        return {
-            "id": obj.doctor.id,
-            "name": obj.doctor.name,
-            "specialty": obj.doctor.specialty,
-            "license_number": obj.doctor.license_number,
-        }
+        read_only_fields = (
+            "status",
+            "created_at",
+            "updated_at",
+        )
 
-    def get_patient_detail(self, obj):
-        return {
-            "first_name": obj.patient.first_name,
-            "last_name": obj.patient.last_name,
-            "dni": obj.patient.dni,
-        }
 
     def create(self, validated_data):
-        doctor_data = validated_data.pop("doctor")
-        patient_data = validated_data.pop("patient")
 
-        doctor = Doctor.objects.get(pk=doctor_data["id"])
+        doctor = validated_data.pop(
+            "doctor"
+        )["id"]
+
+        patient_data = validated_data.pop(
+            "patient"
+        )
+
 
         patient, _ = Patient.objects.update_or_create(
             dni=patient_data["dni"],
@@ -52,16 +131,17 @@ class AppointmentSerializer(serializers.ModelSerializer):
             },
         )
 
+
         appointment = Appointment.objects.create(
             doctor=doctor,
             patient=patient,
-            date=validated_data["date"],
-            time=validated_data["time"],
-            notes=validated_data.get("notes", ""),
-            user=self.context["request"].user,
-            status="scheduled",
+            **validated_data,
         )
 
-        EmailService.send_appointment_confirmation_email(appointment)
+
+        EmailService.send_appointment_confirmation_email(
+            appointment
+        )
+
 
         return appointment

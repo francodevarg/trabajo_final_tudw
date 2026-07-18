@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Appointment
-from doctor.models import Doctor
+from doctor.models import Doctor, Specialty
 from patients.models import Patient
 from myapp.services.email_service import EmailService
 
@@ -21,6 +21,13 @@ class AppointmentPatientSerializer(serializers.Serializer):
     )
     date_of_birth = serializers.DateField()
 
+class AppointmentSpecialtyReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Specialty
+        fields = (
+            "id",
+            "name",
+        )
 
 class AppointmentDoctorReadSerializer(serializers.ModelSerializer):
 
@@ -34,8 +41,7 @@ class AppointmentDoctorReadSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
-    specialty = serializers.CharField(
-        source="specialty.name",
+    specialty = AppointmentSpecialtyReadSerializer(
         read_only=True,
     )
 

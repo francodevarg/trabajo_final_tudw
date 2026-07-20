@@ -20,8 +20,8 @@ La documentación del proyecto se encuentra organizada en los siguientes archivo
 ## 🏗️ Arquitectura
 La aplicación está compuesta por una arquitectura distribuida conformada por:
 
-- 🖥️ **Frontend de pacientes:** interfaz destinada a la gestión de turnos por parte de los pacientes, permitiendo consultar disponibilidad y solicitar citas.
-- 🧑‍⚕️ **Frontend administrativo/profesional:** interfaz orientada a la administración de la clínica y gestión de profesionales, horarios y turnos.
+- 🖥️ **Frontend de pacientes:** interfaz destinada a la gestión de turnos por parte de los pacientes, permitiendo consultar disponibilidad y solicitar citas. (https://github.com/francodevarg/trabajo_final_tudw_frontend)
+- 🧑‍⚕️ **Frontend administrativo/profesional:** interfaz orientada a la administración de la clínica y gestión de profesionales, horarios y turnos. (https://github.com/francodevarg/trabajo_final_tudw_frontend_admin)
 - ⚙️ **Backend Django:** API y lógica de negocio central del sistema. Se encarga de la autenticación, validaciones, gestión de usuarios, turnos y comunicación con la base de datos.
 - 🐘 **PostgreSQL:** base de datos relacional utilizada para almacenar la información del sistema.
 

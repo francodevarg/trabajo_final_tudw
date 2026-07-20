@@ -1,19 +1,21 @@
-# 🚀 Django Backend + Docker (Dev / Prod Ready)
+# 🧠 Proyecto
 
-Backend Django dockerizado con soporte completo para:
+## Descripción
 
-* 🧪 Desarrollo (hot reload)
-* 🚀 Producción (Gunicorn)
-* 🐘 PostgreSQL
-* 🧑‍💻 Dev Containers (VS Code)
+Backend Django dockerizado con soporte para:
+
+- 🧪 Desarrollo (hot reload)
+- 🚀 Producción (Gunicorn)
+- 🐘 PostgreSQL
+- 🧑‍💻 Dev Containers (VS Code)
 
 ---
 
-# 🧠 Arquitectura
+## 📁 Arquitectura
 
 El proyecto está dividido en:
 
-```
+```text
 .
 ├── config/
 │   ├── Dockerfile
@@ -28,191 +30,69 @@ El proyecto está dividido en:
 
 ---
 
-# ⚙️ Modos de ejecución
+## ⚙️ Modos de ejecución
 
-El sistema soporta 2 modos:
-
-| Modo   | Descripción                             |
-| ------ | --------------------------------------- |
-| `dev`  | Desarrollo con `runserver` + hot reload |
-| `prod` | Producción con `gunicorn`               |
+| Modo | Descripción |
+|------|-------------|
+| `dev` | Desarrollo con `runserver` y hot reload |
+| `prod` | Producción utilizando Gunicorn |
 
 ---
 
-# 🚀 Quick Start
+## 🏗️ Funcionamiento
 
-## 🟢 Desarrollo
+### `setup.sh`
 
-```bash
-./setup.sh dev
-```
+El script de inicialización:
 
-👉 Levanta:
+- Crea `.env` si no existe.
+- Detecta el UID/GID del usuario.
+- Define las variables:
+  - `APP_MODE`
+  - `BUILD_TARGET`
+- Ejecuta Docker Compose.
 
-* Django con `runserver`
-* PostgreSQL
-* Volúmenes montados (hot reload)
+### `docker-compose.yml`
 
----
+Se encarga de:
 
-## 🔴 Producción
+- Levantar PostgreSQL.
+- Construir la imagen según el modo seleccionado.
+- Montar volúmenes en desarrollo.
+- Ejecutar el contenedor con el usuario del host para evitar problemas de permisos.
 
-```bash
-./setup.sh prod
-```
+### `entrypoint.sh`
 
-👉 Levanta:
+Al iniciar el contenedor:
 
-* Django con `gunicorn`
-* Código dentro del contenedor (sin volumen)
+- Espera que PostgreSQL esté disponible.
+- Ejecuta las migraciones.
+- Ejecuta `collectstatic`.
+- Inicia Django según el modo seleccionado:
 
----
-
-# 🧠 Cómo funciona
-
-## 🔹 setup.sh
-
-* Crea `.env` si no existe
-* Detecta UID/GID del sistema
-* Define:
-
-  * `APP_MODE` → dev / prod
-  * `BUILD_TARGET` → development / production
-* Ejecuta docker-compose
-
----
-
-## 🔹 docker-compose.yml
-
-* Usa variables dinámicas:
-
-  * `APP_MODE`
-  * `BUILD_TARGET`
-* Monta volúmenes en dev
-* Usa usuario del host (evita problemas de permisos)
-
----
-
-## 🔹 entrypoint.sh
-
-Decide cómo correr Django:
-
-```bash
+```text
 dev  → python manage.py runserver
 prod → gunicorn
 ```
 
-También:
-
-* Espera a PostgreSQL
-* Ejecuta migraciones
-* Ejecuta collectstatic
-
 ---
 
-# 🐳 Comandos útiles
+## 👤 Usuario del contenedor
 
-## Ver logs
+El contenedor utiliza el mismo UID/GID que el usuario local mediante:
 
-```bash
-docker compose -f config/docker-compose.yml logs -f django_backend
-```
-
-## Entrar al contenedor
-
-```bash
-docker compose -f config/docker-compose.yml exec django_backend bash
-```
-
-## Parar todo
-
-```bash
-docker compose -f config/docker-compose.yml down
-```
-
-## Reset completo
-
-```bash
-docker compose -f config/docker-compose.yml down -v
-```
-
-## Rebuild sin cache
-
-```bash
-docker compose -f config/docker-compose.yml build --no-cache
-```
-
----
-
-# 🧑‍💻 Variables de entorno
-
-Archivo: `src/.env`
-
-```env
-POSTGRES_DB=django_db
-POSTGRES_USER=django_user
-POSTGRES_PASSWORD=django_pass
-POSTGRES_PORT=5432
-
-APP_PORT=8000
-
-DJANGO_SETTINGS_MODULE=myapp.settings
-DJANGO_DIR=/workspace/src
-```
-
----
-
-# 👤 Usuario del contenedor
-
-El contenedor corre con tu usuario local:
-
-```bash
+```text
 LOCAL_UID
 LOCAL_GID
 ```
 
-👉 Evita problemas de permisos con volúmenes
+Esto evita problemas de permisos sobre los volúmenes compartidos.
 
 ---
 
-# ⚠️ Troubleshooting
+## 🎯 Filosofía del proyecto
 
-## ❌ No conecta a la DB
-
-```bash
-docker compose ps
-```
-
----
-
-## ❌ No encuentra manage.py
-
-👉 Revisar volumen:
-
-```
-../src:/workspace/src
-```
-
----
-
-## ❌ Cambios no impactan
-
-👉 Asegurarse de estar en modo `dev`
-
----
-
-
-# 🧠 Filosofía del proyecto
-
-* Simplicidad primero
-* Dev ≠ Prod (bien separados)
-* Docker como entorno único
-* Escalable a producción real
-
----
-
-# 🧑‍💻 Autor
-
-Franco Narváez 🚀
-
----
+- Simplicidad primero.
+- Separación clara entre desarrollo y producción.
+- Docker como entorno único de ejecución.
+- Preparado para escalar a un entorno de producción real.

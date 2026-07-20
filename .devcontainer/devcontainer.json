@@ -1,0 +1,33 @@
+{
+  "name": "trabajo-final-tudw",
+  "dockerComposeFile": [
+    "../config/docker-compose.yml"
+  ],
+  "service": "django_backend",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "vscode",
+  "containerUser": "vscode",
+  "overrideCommand": false,
+  "runServices": [
+    "django_backend",
+    "db"
+  ],
+  "remoteEnv": {
+    "LOCAL_UID": "1000",
+    "LOCAL_GID": "1000",
+    "DEVCONTAINER_USER": "vscode"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "ms-python.debugpy"
+      ]
+    }
+  },
+  "postCreateCommand": "if [ -f /workspace/config/requirements.txt ]; then pip install -r /workspace/config/requirements.txt; fi",
+  "postStartCommand": "chmod +x /workspace/config/entrypoint.sh /workspace/setup.sh || true"
+}

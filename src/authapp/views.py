@@ -44,35 +44,42 @@ class VerifyOTPView(APIView):
 
     authentication_classes = []
     permission_classes = []
+    @staticmethod
+    def error(code: str, detail: str, status_code=status.HTTP_400_BAD_REQUEST):
+        return Response(
+            {
+                "code": code,
+                "detail": detail,
+            },
+            status=status_code,
+        )
 
     def post(self, request):
-
         serializer = VerifyOTPSerializer(data=request.data)
-
         serializer.is_valid(raise_exception=True)
 
-        email = serializer.validated_data['email']
-        otp = serializer.validated_data['otp']
+        email = serializer.validated_data["email"]
+        otp = serializer.validated_data["otp"]
 
         user = User.objects.filter(email=email).first()
 
         if not user:
-            return Response(
-                {'detail': 'Invalid credentials.'},
-                status=status.HTTP_400_BAD_REQUEST
+            return self.error(
+                "USER_NOT_FOUND",
+                "No existe una cuenta con ese email."
             )
 
-        is_valid = OTPService.validate_otp(user, otp)
-
-        if not is_valid:
-            return Response(
-                {'detail': 'Invalid or expired OTP.'},
-                status=status.HTTP_400_BAD_REQUEST
+        if not OTPService.validate_otp(user, otp):
+            return self.error(
+                "OTP_INVALID",
+                "El código es inválido o expiró."
             )
 
         refresh = CustomTokenSerializer.get_token(user)
 
         return Response({
-            'access': str(refresh.access_token),
-            'refresh': str(refresh)
-        })
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+        },
+        status=status.HTTP_200_OK,
+        )

@@ -63,6 +63,6 @@ class Appointment(models.Model):
     def __str__(self):
         return (
             f"{self.patient.first_name} {self.patient.last_name} "
-            f"- Dr. {self.doctor.name} "
+            f"- Dr. {self.doctor.user.get_full_name()} "
             f"({self.date} {self.time})"
         )

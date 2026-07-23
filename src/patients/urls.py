@@ -1,11 +1,5 @@
-from django.urls import include, path
-from rest_framework.routers import SimpleRouter
-
-from patients.views import PatientViewSet
-
-router = SimpleRouter()
-router.register(r"", PatientViewSet, basename="patient")
-
+from django.urls import path
+from patients.views import PatientListView
 urlpatterns = [
-    path("", include(router.urls)),
+    path("", PatientListView.as_view(), name="patient-list"),
 ]

@@ -151,3 +151,9 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
 
         return appointment
+
+
+class AppointmentStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = ("status",)

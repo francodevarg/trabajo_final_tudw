@@ -8,6 +8,7 @@ from .views import (
     AppointmentCheckInView,
     AppointmentStartView,
     AppointmentNoShowView,
+    AppointmentByUserView
 )
 urlpatterns = [
     path('', AppointmentListCreateView.as_view()),          # listar + crear
@@ -32,4 +33,6 @@ urlpatterns = [
         "<int:pk>/no-show",
         AppointmentNoShowView.as_view(), #NO Asistencia
     ),
+    path("user/<int:user_id>", AppointmentByUserView.as_view()),
+
 ]

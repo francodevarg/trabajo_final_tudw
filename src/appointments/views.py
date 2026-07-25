@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
+from .models import Appointment
 
 from appointments.serializers import AppointmentSerializer
 
@@ -233,3 +234,15 @@ class AppointmentNoShowView(
 ):
 
     status = "no_show"
+
+class AppointmentByUserView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AppointmentSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs["user_id"]
+        return Appointment.objects.select_related(
+            "doctor__user",
+            "doctor__specialty",
+            "patient",
+        ).filter(user_id=user_id)

@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import Doctor, Specialty, Insurance
 from .serializers import SpecialtySerializer, InsuranceSerializer, NextAvailableSlotSerializer, AvailableSlotSerializer
-from .permissions import IsAdminRole
+from .permissions import IsAdminRole,IsAdminOrOwner
 from .services import SlotService
 from myapp.services.email_service import EmailService
 from rest_framework.permissions import AllowAny
@@ -115,7 +115,7 @@ class DoctorListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
 
 
 class DoctorDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
-    permission_classes = [IsAuthenticated, IsAdminRole]
+    permission_classes = [IsAuthenticated, IsAdminOrOwner]
 
     def get_serializer_class(self):
         if self.request.method in ("PUT", "PATCH"):
@@ -160,7 +160,12 @@ class DoctorDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, Des
 class SpecialtyListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
     queryset = Specialty.objects.all()
     serializer_class = SpecialtySerializer
-    permission_classes = [IsAuthenticated, IsAdminRole]
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAuthenticated(), IsAdminRole()]
+        return [AllowAny()]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -172,7 +177,7 @@ class SpecialtyListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
 class SpecialtyDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
     queryset = Specialty.objects.all()
     serializer_class = SpecialtySerializer
-    permission_classes = [IsAuthenticated, IsAdminRole]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -190,7 +195,7 @@ class SpecialtyDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, 
 class InsuranceListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
     queryset = Insurance.objects.all()
     serializer_class = InsuranceSerializer
-    permission_classes = [IsAuthenticated, IsAdminRole]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -202,7 +207,7 @@ class InsuranceListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
 class InsuranceDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin):
     queryset = Insurance.objects.all()
     serializer_class = InsuranceSerializer
-    permission_classes = [IsAuthenticated, IsAdminRole]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

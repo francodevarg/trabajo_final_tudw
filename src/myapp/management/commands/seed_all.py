@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
         call_command("seed_auth")
 
-        call_command("seed_doctors")
+        call_command("seed")
 
         self.stdout.write(
             self.style.SUCCESS("All seeds executed successfully.")

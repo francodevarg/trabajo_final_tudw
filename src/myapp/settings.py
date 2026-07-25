@@ -15,6 +15,21 @@ from datetime import timedelta
 import os 
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
+USER_ADMIN = {
+    "email": os.getenv("USER_ADMIN_EMAIL"),
+    "username": os.getenv("USER_ADMIN_USERNAME"),
+    "password": os.getenv("USER_ADMIN_PASSWORD"),
+    "first_name": os.getenv("USER_ADMIN_FIRST_NAME", "System"),
+    "last_name": os.getenv("USER_ADMIN_LAST_NAME", "Admin"),
+}
+
+USER_DOCTOR = {
+    "email": os.getenv("USER_DOCTOR_EMAIL"),
+    "username": os.getenv("USER_DOCTOR_USERNAME"),
+    "password": os.getenv("USER_DOCTOR_PASSWORD"),
+    "first_name": os.getenv("USER_DOCTOR_FIRST_NAME", "Doctor"),
+    "last_name": os.getenv("USER_DOCTOR_LAST_NAME", "Demo"),
+}
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

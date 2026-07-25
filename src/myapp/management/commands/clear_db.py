@@ -35,9 +35,7 @@ class Command(BaseCommand):
 
         Group.objects.all().delete()
 
-        User.objects.exclude(
-            is_superuser=True
-        ).delete()
+        User.objects.all().delete()
 
         self.stdout.write(
             self.style.SUCCESS(

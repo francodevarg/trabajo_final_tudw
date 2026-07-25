@@ -1,0 +1,268 @@
+{
+  "roles": ["ADMIN", "DOCTOR", "PATIENT"],
+  "specialties": [
+    {"name": "Cardiología", "slug": "cardiologia"},
+    {"name": "Pediatría", "slug": "pediatria"},
+    {"name": "Dermatología", "slug": "dermatologia"},
+    {"name": "Traumatología", "slug": "traumatologia"},
+    {"name": "Clínica Médica", "slug": "clinica-medica"}
+  ],
+  "insurances": [
+    {"name": "OSDE", "slug": "osde"},
+    {"name": "Swiss Medical", "slug": "swiss-medical"},
+    {"name": "Galeno", "slug": "galeno"},
+    {"name": "Medifé", "slug": "medife"}
+  ],
+  "doctors": [
+    {
+      "username": "dr_garcia",
+      "email": "garcia@clinica.com",
+      "first_name": "Juan",
+      "last_name": "García",
+      "specialty": "Cardiología",
+      "license_number": "MP-10001",
+      "phone": "+541110000001",
+      "consultation_fee": 12000,
+      "insurances": ["OSDE", "Swiss Medical"],
+      "availabilities": [
+        {"day_of_week": 1, "start_time": "09:00:00", "end_time": "13:00:00"},
+        {"day_of_week": 3, "start_time": "09:00:00", "end_time": "13:00:00"},
+        {"day_of_week": 5, "start_time": "14:00:00", "end_time": "18:00:00"}
+      ]
+    },
+    {
+      "username": "dr_martinez",
+      "email": "martinez@clinica.com",
+      "first_name": "Ana",
+      "last_name": "Martínez",
+      "specialty": "Pediatría",
+      "license_number": "MP-10002",
+      "phone": "+541110000002",
+      "consultation_fee": 8000,
+      "insurances": ["OSDE", "Galeno", "Medifé"],
+      "availabilities": [
+        {"day_of_week": 0, "start_time": "08:00:00", "end_time": "12:00:00"},
+        {"day_of_week": 2, "start_time": "08:00:00", "end_time": "12:00:00"},
+        {"day_of_week": 4, "start_time": "15:00:00", "end_time": "19:00:00"}
+      ]
+    },
+    {
+      "username": "dr_lopez",
+      "email": "lopez@clinica.com",
+      "first_name": "Carlos",
+      "last_name": "López",
+      "specialty": "Dermatología",
+      "license_number": "MP-10003",
+      "phone": "+541110000003",
+      "consultation_fee": 10000,
+      "insurances": ["Swiss Medical", "Galeno"],
+      "availabilities": [
+        {"day_of_week": 1, "start_time": "14:00:00", "end_time": "18:00:00"},
+        {"day_of_week": 3, "start_time": "14:00:00", "end_time": "18:00:00"}
+      ]
+    },
+    {
+      "username": "dr_rodriguez",
+      "email": "rodriguez@clinica.com",
+      "first_name": "María",
+      "last_name": "Rodríguez",
+      "specialty": "Traumatología",
+      "license_number": "MP-10004",
+      "phone": "+541110000004",
+      "consultation_fee": 11000,
+      "insurances": ["OSDE", "Swiss Medical", "Medifé"],
+      "availabilities": [
+        {"day_of_week": 0, "start_time": "10:00:00", "end_time": "14:00:00"},
+        {"day_of_week": 2, "start_time": "10:00:00", "end_time": "14:00:00"},
+        {"day_of_week": 4, "start_time": "10:00:00", "end_time": "14:00:00"}
+      ]
+    },
+    {
+      "username": "dr_fernandez",
+      "email": "fernandez@clinica.com",
+      "first_name": "Luis",
+      "last_name": "Fernández",
+      "specialty": "Clínica Médica",
+      "license_number": "MP-10005",
+      "phone": "+541110000005",
+      "consultation_fee": 7500,
+      "insurances": ["OSDE", "Galeno"],
+      "availabilities": [
+        {"day_of_week": 1, "start_time": "08:00:00", "end_time": "12:00:00"},
+        {"day_of_week": 3, "start_time": "08:00:00", "end_time": "12:00:00"},
+        {"day_of_week": 5, "start_time": "08:00:00", "end_time": "12:00:00"}
+      ]
+    },
+    {
+      "username": "dr_sanchez",
+      "email": "sanchez@clinica.com",
+      "first_name": "Laura",
+      "last_name": "Sánchez",
+      "specialty": "Cardiología",
+      "license_number": "MP-10006",
+      "phone": "+541110000006",
+      "consultation_fee": 13000,
+      "insurances": ["Swiss Medical", "Medifé"],
+      "availabilities": [
+        {"day_of_week": 0, "start_time": "14:00:00", "end_time": "18:00:00"},
+        {"day_of_week": 2, "start_time": "14:00:00", "end_time": "18:00:00"},
+        {"day_of_week": 4, "start_time": "08:00:00", "end_time": "12:00:00"}
+      ]
+    },
+    {
+      "username": "dr_torres",
+      "email": "torres@clinica.com",
+      "first_name": "Pedro",
+      "last_name": "Torres",
+      "specialty": "Pediatría",
+      "license_number": "MP-10007",
+      "phone": "+541110000007",
+      "consultation_fee": 8500,
+      "insurances": ["OSDE", "Galeno", "Medifé"],
+      "availabilities": [
+        {"day_of_week": 1, "start_time": "09:00:00", "end_time": "13:00:00"},
+        {"day_of_week": 3, "start_time": "09:00:00", "end_time": "13:00:00"}
+      ]
+    },
+    {
+      "username": "dr_ramirez",
+      "email": "ramirez@clinica.com",
+      "first_name": "Sofía",
+      "last_name": "Ramírez",
+      "specialty": "Dermatología",
+      "license_number": "MP-10008",
+      "phone": "+541110000008",
+      "consultation_fee": 9500,
+      "insurances": ["OSDE", "Swiss Medical"],
+      "availabilities": [
+        {"day_of_week": 0, "start_time": "09:00:00", "end_time": "13:00:00"},
+        {"day_of_week": 2, "start_time": "09:00:00", "end_time": "13:00:00"},
+        {"day_of_week": 4, "start_time": "14:00:00", "end_time": "18:00:00"}
+      ]
+    },
+    {
+      "username": "dr_diaz",
+      "email": "diaz@clinica.com",
+      "first_name": "Diego",
+      "last_name": "Díaz",
+      "specialty": "Traumatología",
+      "license_number": "MP-10009",
+      "phone": "+541110000009",
+      "consultation_fee": 11500,
+      "insurances": ["Galeno", "Medifé"],
+      "availabilities": [
+        {"day_of_week": 1, "start_time": "15:00:00", "end_time": "19:00:00"},
+        {"day_of_week": 3, "start_time": "15:00:00", "end_time": "19:00:00"},
+        {"day_of_week": 5, "start_time": "09:00:00", "end_time": "13:00:00"}
+      ]
+    },
+    {
+      "username": "dr_romero",
+      "email": "romero@clinica.com",
+      "first_name": "Valeria",
+      "last_name": "Romero",
+      "specialty": "Clínica Médica",
+      "license_number": "MP-10010",
+      "phone": "+541110000010",
+      "consultation_fee": 7000,
+      "insurances": ["OSDE", "Swiss Medical", "Galeno", "Medifé"],
+      "availabilities": [
+        {"day_of_week": 0, "start_time": "08:00:00", "end_time": "12:00:00"},
+        {"day_of_week": 2, "start_time": "14:00:00", "end_time": "18:00:00"},
+        {"day_of_week": 4, "start_time": "08:00:00", "end_time": "12:00:00"}
+      ]
+    }
+  ],
+  "patients": [
+    {
+      "username": "pac_perez",
+      "email": "perez@mail.com",
+      "first_name": "Martín",
+      "last_name": "Pérez",
+      "date_of_birth": "1985-03-15",
+      "dni": 31234567,
+      "sex": "M"
+    },
+    {
+      "username": "pac_gomez",
+      "email": "gomez@mail.com",
+      "first_name": "Lucía",
+      "last_name": "Gómez",
+      "date_of_birth": "1990-07-22",
+      "dni": 35123456,
+      "sex": "F"
+    },
+    {
+      "username": "pac_fernandez",
+      "email": "fernandez.p@mail.com",
+      "first_name": "Pablo",
+      "last_name": "Fernández",
+      "date_of_birth": "1978-11-03",
+      "dni": 26456789,
+      "sex": "M"
+    },
+    {
+      "username": "pac_silva",
+      "email": "silva@mail.com",
+      "first_name": "Carolina",
+      "last_name": "Silva",
+      "date_of_birth": "1995-02-18",
+      "dni": 38789012,
+      "sex": "F"
+    },
+    {
+      "username": "pac_rodriguez",
+      "email": "rodriguez.m@mail.com",
+      "first_name": "Matías",
+      "last_name": "Rodríguez",
+      "date_of_birth": "1982-09-30",
+      "dni": 29345678,
+      "sex": "M"
+    },
+    {
+      "username": "pac_martinez",
+      "email": "martinez.a@mail.com",
+      "first_name": "Andrea",
+      "last_name": "Martínez",
+      "date_of_birth": "1988-05-12",
+      "dni": 33567890,
+      "sex": "F"
+    },
+    {
+      "username": "pac_lopez",
+      "email": "lopez.j@mail.com",
+      "first_name": "Javier",
+      "last_name": "López",
+      "date_of_birth": "1975-12-08",
+      "dni": 22678901,
+      "sex": "M"
+    },
+    {
+      "username": "pac_diaz",
+      "email": "diaz.v@mail.com",
+      "first_name": "Valentina",
+      "last_name": "Díaz",
+      "date_of_birth": "1992-04-25",
+      "dni": 36890123,
+      "sex": "F"
+    },
+    {
+      "username": "pac_torres",
+      "email": "torres.r@mail.com",
+      "first_name": "Ramiro",
+      "last_name": "Torres",
+      "date_of_birth": "1980-08-19",
+      "dni": 28012345,
+      "sex": "M"
+    },
+    {
+      "username": "pac_romero",
+      "email": "romero.s@mail.com",
+      "first_name": "Alex",
+      "last_name": "Romero",
+      "date_of_birth": "1998-01-07",
+      "dni": 40234567,
+      "sex": "O"
+    }
+  ]
+}

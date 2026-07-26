@@ -1,0 +1,35 @@
+{
+  "ADMIN": ["*", "authapp.add_otpcode", "authapp.change_otpcode", "authapp.view_otpcode"],
+  "DOCTOR": [
+    "doctor.view_insurance",
+    "doctor.change_insurance",
+    "doctor.view_specialty",
+    "doctor.change_specialty",
+    "doctor.view_doctor",
+    "doctor.change_doctor",
+    "doctor.view_availability",
+    "doctor.add_availability",
+    "doctor.change_availability",
+    "appointments.view_appointment",
+    "appointments.change_appointment",
+    "patients.view_patient",
+    "patients.view_patientuser",
+    "evolutions.view_evolution",
+    "evolutions.add_evolution",
+    "evolutions.change_evolution",
+    "authapp.view_profile",
+    "authapp.change_profile",
+    "authapp.add_otpcode",
+    "authapp.change_otpcode",
+    "authapp.view_otpcode"
+  ],
+  "PATIENT": [
+    "appointments.view_appointment",
+    "appointments.change_appointment",
+    "appointments.add_appointment",
+    "patients.view_patient",
+    "authapp.add_otpcode",
+    "authapp.change_otpcode",
+    "authapp.view_otpcode"
+  ]
+}

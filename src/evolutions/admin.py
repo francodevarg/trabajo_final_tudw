@@ -16,8 +16,8 @@ class EvolutionAdmin(admin.ModelAdmin):
     search_fields = (
         "appointment__doctor__user__first_name",
         "appointment__doctor__user__last_name",
-        "appointment__patient__user__first_name",
-        "appointment__patient__user__last_name",
+        "appointment__patient__first_name",
+        "appointment__patient__last_name",
         "diagnosis",
     )
 

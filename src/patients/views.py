@@ -67,7 +67,8 @@ class PatientHistoryView(ListAPIView):
 
         return (
             Evolution.objects.filter(
-                appointment__patient_id=patient_id
+                appointment__patient_id=patient_id,
+                appointment__doctor__user=self.request.user
             )
             .select_related(
                 "appointment",

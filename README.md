@@ -14,8 +14,8 @@ La aplicación desarrollada es un **Sistema de Gestión de Turnos para una Clini
 
 La documentación del proyecto se encuentra organizada en los siguientes archivos:
 
-- 📖 [**PROJECT.md**](./documentacion/PROJECT.md): descripción de la arquitectura, organización del proyecto, componentes y funcionamiento interno.
-- 🚀 [**DEPLOY.md**](./documentacion/DEPLOY.md): guía de instalación, configuración del entorno, despliegue con Docker y comandos útiles.
+- 📖 [**PROJECT.md**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentacion/PROJECT.md): descripción de la arquitectura, organización del proyecto, componentes y funcionamiento interno.
+- 🚀 [**DEPLOY.md**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentacion/DEPLOY.md): guía de instalación, configuración del entorno, despliegue con Docker y comandos útiles.
 
 ## 🏗️ Arquitectura
 La aplicación está compuesta por una arquitectura distribuida conformada por:

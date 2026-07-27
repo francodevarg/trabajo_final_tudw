@@ -13,14 +13,19 @@ class PatientListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        patients = Patient.objects.filter(
-            user_links__user=request.user
-        ).prefetch_related(
+        if request.user.groups.filter(name="ADMIN").exists() or request.user.is_superuser:
+            patients = Patient.objects.all()
+        else:
+            patients = Patient.objects.filter(
+                user_links__user=request.user
+            )
+
+        patients = patients.prefetch_related(
             "user_links__user"
         ).order_by("last_name", "first_name")
+
         serializer = PatientListSerializer(patients, many=True)
         return Response(serializer.data)
-
 
 class SetPrimaryPatientView(APIView):
     permission_classes = [IsAuthenticated]

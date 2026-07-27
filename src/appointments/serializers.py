@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import Appointment
 from doctor.models import Doctor, Specialty
-from patients.models import Patient
+from patients.models import Patient, PatientUser
 from myapp.services.email_service import EmailService
 
 
@@ -13,13 +13,23 @@ class AppointmentDoctorSerializer(serializers.Serializer):
 
 
 class AppointmentPatientSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=100)
-    last_name = serializers.CharField(max_length=100)
-    dni = serializers.CharField(max_length=20)
+    patient_id = serializers.IntegerField(required=False)
+    first_name = serializers.CharField(max_length=100, required=False)
+    last_name = serializers.CharField(max_length=100, required=False)
+    dni = serializers.CharField(max_length=20, required=False)
     sex = serializers.ChoiceField(
-        choices=Patient.SexChoices.choices
+        choices=Patient.SexChoices.choices,
+        required=False,
     )
-    date_of_birth = serializers.DateField()
+    date_of_birth = serializers.DateField(required=False)
+
+    def validate(self, data):
+        if not data.get("patient_id") and not data.get("dni"):
+            raise serializers.ValidationError(
+                "Se requiere patient_id o los datos del paciente (dni, first_name, last_name)."
+            )
+        return data
+
 
 class AppointmentSpecialtyReadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -105,12 +115,14 @@ class AppointmentSerializer(serializers.ModelSerializer):
             "time",
             "status",
             "notes",
+            "user",
             "created_at",
             "updated_at",
         )
 
         read_only_fields = (
             "status",
+            "user",
             "created_at",
             "updated_at",
         )
@@ -126,21 +138,40 @@ class AppointmentSerializer(serializers.ModelSerializer):
             "patient"
         )
 
+        user = validated_data.pop("user")
 
-        patient, _ = Patient.objects.update_or_create(
-            dni=patient_data["dni"],
-            defaults={
-                "first_name": patient_data["first_name"],
-                "last_name": patient_data["last_name"],
-                "sex": patient_data["sex"],
-                "date_of_birth": patient_data["date_of_birth"],
-            },
-        )
-
+        if patient_data.get("patient_id"):
+            patient = Patient.objects.get(
+                id=patient_data["patient_id"]
+            )
+            if not PatientUser.objects.filter(
+                user=user, patient=patient
+            ).exists():
+                raise serializers.ValidationError(
+                    {
+                        "patient": "No tienes acceso a este paciente."
+                    }
+                )
+        else:
+            patient, _ = Patient.objects.update_or_create(
+                dni=patient_data["dni"],
+                defaults={
+                    "first_name": patient_data["first_name"],
+                    "last_name": patient_data["last_name"],
+                    "sex": patient_data.get("sex", "N"),
+                    "date_of_birth": patient_data.get("date_of_birth"),
+                },
+            )
+            PatientUser.objects.get_or_create(
+                user=user,
+                patient=patient,
+                defaults={"is_primary": False, "role": "self"},
+            )
 
         appointment = Appointment.objects.create(
             doctor=doctor,
             patient=patient,
+            user=user,
             **validated_data,
         )
 

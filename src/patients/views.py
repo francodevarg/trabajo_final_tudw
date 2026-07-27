@@ -6,7 +6,7 @@ from rest_framework.generics import ListAPIView
 
 from patients.models import Patient, PatientUser
 from evolutions.models import Evolution
-from patients.serializers import PatientListSerializer, PatientHistorySerializer
+from patients.serializers import PatientListSerializer, PatientHistorySerializer, PatientCreateSerializer
 
 
 class PatientListView(APIView):
@@ -26,6 +26,23 @@ class PatientListView(APIView):
 
         serializer = PatientListSerializer(patients, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        serializer = PatientCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        patient = serializer.save()
+
+        PatientUser.objects.create(
+            user=request.user,
+            patient=patient,
+            role=PatientUser.Role.SELF,
+            is_primary=True,
+        )
+
+        return Response(
+            PatientListSerializer(patient).data,
+            status=status.HTTP_201_CREATED,
+        )
 
 class SetPrimaryPatientView(APIView):
     permission_classes = [IsAuthenticated]

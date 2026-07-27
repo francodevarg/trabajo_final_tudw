@@ -16,6 +16,12 @@ class PatientUserSerializer(serializers.ModelSerializer):
         return obj.user.get_full_name() or obj.user.email
 
 
+class PatientCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = ("first_name", "last_name", "dni", "date_of_birth", "sex")
+
+
 class PatientListSerializer(serializers.ModelSerializer):
     users = PatientUserSerializer(source="user_links", many=True, read_only=True)
 

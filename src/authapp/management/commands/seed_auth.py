@@ -99,6 +99,7 @@ class Command(BaseCommand):
 
         self._create_user(settings.USER_ADMIN, admin_group, is_staff=True, is_superuser=True)
         self._create_user(settings.USER_DOCTOR, doctor_group)
+        self._create_user(settings.USER_PATIENT, patient_group)
 
         for data in SEED_USERS:
             group_map = {"DOCTOR": doctor_group, "PATIENT": patient_group}

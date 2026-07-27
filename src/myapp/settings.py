@@ -30,6 +30,14 @@ USER_DOCTOR = {
     "first_name": os.getenv("USER_DOCTOR_FIRST_NAME", "Doctor"),
     "last_name": os.getenv("USER_DOCTOR_LAST_NAME", "Demo"),
 }
+
+USER_PATIENT = {
+    "email": os.getenv("USER_PATIENT_EMAIL"),
+    "username": os.getenv("USER_PATIENT_USERNAME"),
+    "password": os.getenv("USER_PATIENT_PASSWORD"),
+    "first_name": os.getenv("USER_PATIENT_FIRST_NAME", "Patient"),
+    "last_name": os.getenv("USER_PATIENT_LAST_NAME", "Demo"),
+}
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

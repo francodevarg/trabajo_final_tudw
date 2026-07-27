@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Appointment
+from .models import Appointment, AppointmentStatus
 from doctor.models import Doctor, Specialty
 from patients.models import Patient, PatientUser
 from myapp.services.email_service import EmailService
@@ -166,6 +166,31 @@ class AppointmentSerializer(serializers.ModelSerializer):
                 user=user,
                 patient=patient,
                 defaults={"is_primary": False, "role": "self"},
+            )
+
+        overlapping = Appointment.objects.filter(
+            patient=patient,
+            date=validated_data["date"],
+            time=validated_data["time"],
+        ).exclude(status=AppointmentStatus.CANCELLED)
+
+        if overlapping.exists():
+            raise serializers.ValidationError(
+                {
+                    "patient": "El paciente ya tiene un turno programado a esta hora."
+                }
+            )
+
+        daily_count = Appointment.objects.filter(
+            patient=patient,
+            date=validated_data["date"],
+        ).exclude(status=AppointmentStatus.CANCELLED).count()
+
+        if daily_count >= 3:
+            raise serializers.ValidationError(
+                {
+                    "patient": "El paciente ya tiene el límite máximo de 3 turnos por día."
+                }
             )
 
         appointment = Appointment.objects.create(

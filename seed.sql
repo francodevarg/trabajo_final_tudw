@@ -41,20 +41,20 @@ INSERT INTO doctor_insurance (name, slug) VALUES
 
 -- ============================================================
 -- 4. DOCTORES (doctor_doctor)
--- user_id 2-11, specialty_id 1-5 (rotando)
+-- user_id via subquery para desacoplar del orden de creación
 -- ============================================================
 
 INSERT INTO doctor_doctor (user_id, specialty_id, license_number, phone, description, consultation_fee, is_active, created_at, updated_at, appointment_duration) VALUES
-(2, 1, 'MP-12345', '+54 11 5555-1001', 'Cardiólogo con 20 años de experiencia. Especialista en arritmias y insuficiencia cardíaca.', 15000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
-(3, 2, 'MP-23456', '+54 11 5555-1002', 'Pediatra certificada. Atención integral del niño y adolescente.', 12000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
-(4, 3, 'MP-34567', '+54 11 5555-1003', 'Dermatólogo. Especialista en dermatología estética y oncológica.', 13000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
-(5, 4, 'MP-45678', '+54 11 5555-1004', 'Traumatólogo y ortopedista. Cirugía artroscópica y deportiva.', 14000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
-(6, 5, 'MP-56789', '+54 11 5555-1005', 'Clínico general. Atención primaria y medicina preventiva.', 10000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
-(7, 1, 'MP-67890', '+54 11 5555-1006', 'Cardióloga intervencionista. Cateterismos y stents coronarios.', 18000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 45),
-(8, 2, 'MP-78901', '+54 11 5555-1007', 'Pediatra neonatólogo. Cuidados intensivos neonatales.', 15000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
-(9, 3, 'MP-89012', '+54 11 5555-1008', 'Dermatóloga. Especialista en acné, psoriasis y alergias cutáneas.', 12000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
-(10, 4, 'MP-90123', '+54 11 5555-1009', 'Traumatólogo. Especialista en columna vertebral y cirugía mínimamente invasiva.', 16000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 45),
-(11, 5, 'MP-01234', '+54 11 5555-1010', 'Clínica médica. Diagnóstico y tratamiento de enfermedades complejas.', 11000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30);
+((SELECT id FROM auth_user WHERE username = 'doctor1'), 1, 'MP-12345', '+54 11 5555-1001', 'Cardiólogo con 20 años de experiencia. Especialista en arritmias y insuficiencia cardíaca.', 15000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
+((SELECT id FROM auth_user WHERE username = 'doctor2'), 2, 'MP-23456', '+54 11 5555-1002', 'Pediatra certificada. Atención integral del niño y adolescente.', 12000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
+((SELECT id FROM auth_user WHERE username = 'doctor3'), 3, 'MP-34567', '+54 11 5555-1003', 'Dermatólogo. Especialista en dermatología estética y oncológica.', 13000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
+((SELECT id FROM auth_user WHERE username = 'doctor4'), 4, 'MP-45678', '+54 11 5555-1004', 'Traumatólogo y ortopedista. Cirugía artroscópica y deportiva.', 14000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
+((SELECT id FROM auth_user WHERE username = 'doctor5'), 5, 'MP-56789', '+54 11 5555-1005', 'Clínico general. Atención primaria y medicina preventiva.', 10000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
+((SELECT id FROM auth_user WHERE username = 'doctor6'), 1, 'MP-67890', '+54 11 5555-1006', 'Cardióloga intervencionista. Cateterismos y stents coronarios.', 18000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 45),
+((SELECT id FROM auth_user WHERE username = 'doctor7'), 2, 'MP-78901', '+54 11 5555-1007', 'Pediatra neonatólogo. Cuidados intensivos neonatales.', 15000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
+((SELECT id FROM auth_user WHERE username = 'doctor8'), 3, 'MP-89012', '+54 11 5555-1008', 'Dermatóloga. Especialista en acné, psoriasis y alergias cutáneas.', 12000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30),
+((SELECT id FROM auth_user WHERE username = 'doctor9'), 4, 'MP-90123', '+54 11 5555-1009', 'Traumatólogo. Especialista en columna vertebral y cirugía mínimamente invasiva.', 16000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 45),
+((SELECT id FROM auth_user WHERE username = 'doctor10'), 5, 'MP-01234', '+54 11 5555-1010', 'Clínica médica. Diagnóstico y tratamiento de enfermedades complejas.', 11000.00, TRUE, '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03', 30);
 
 -- ============================================================
 -- 5. OBRAS SOCIALES POR DOCTOR (doctor_doctor_insurances)
@@ -162,39 +162,41 @@ INSERT INTO patients_patient (first_name, last_name, date_of_birth, dni, sex, cr
 -- ============================================================
 
 INSERT INTO patients_patientuser (user_id, patient_id, is_primary, role, created_at) VALUES
--- patient1 (user_id=12) → Patient1 (primary) + Patient6 (non-primary)
-(12, 1, TRUE, 'self', '2026-07-26 10:00:00-03'),
-(12, 6, FALSE, 'parent', '2026-07-26 10:00:00-03'),
--- patient2 (user_id=13) → Patient2 (primary) + Patient7 (non-primary)
-(13, 2, TRUE, 'self', '2026-07-26 10:00:00-03'),
-(13, 7, FALSE, 'parent', '2026-07-26 10:00:00-03'),
--- patient3 (user_id=14) → Patient3 (primary)
-(14, 3, TRUE, 'self', '2026-07-26 10:00:00-03'),
--- patient4 (user_id=15) → Patient4 (primary)
-(15, 4, TRUE, 'self', '2026-07-26 10:00:00-03'),
--- patient5 (user_id=16) → Patient5 (primary)
-(16, 5, TRUE, 'self', '2026-07-26 10:00:00-03');
+-- patient1 → Patient1 (primary) + Patient6 (non-primary)
+((SELECT id FROM auth_user WHERE username = 'patient1'), 1, TRUE, 'self', '2026-07-26 10:00:00-03'),
+((SELECT id FROM auth_user WHERE username = 'patient1'), 6, FALSE, 'parent', '2026-07-26 10:00:00-03'),
+-- patient2 → Patient2 (primary) + Patient7 (non-primary)
+((SELECT id FROM auth_user WHERE username = 'patient2'), 2, TRUE, 'self', '2026-07-26 10:00:00-03'),
+((SELECT id FROM auth_user WHERE username = 'patient2'), 7, FALSE, 'parent', '2026-07-26 10:00:00-03'),
+-- patient3 → Patient3 (primary)
+((SELECT id FROM auth_user WHERE username = 'patient3'), 3, TRUE, 'self', '2026-07-26 10:00:00-03'),
+-- patient4 → Patient4 (primary)
+((SELECT id FROM auth_user WHERE username = 'patient4'), 4, TRUE, 'self', '2026-07-26 10:00:00-03'),
+-- patient5 → Patient5 (primary)
+((SELECT id FROM auth_user WHERE username = 'patient5'), 5, TRUE, 'self', '2026-07-26 10:00:00-03');
 
 -- ============================================================
 -- 9. TURNOS (appointments_appointment)
 -- Fechas en julio 2026 (ya pasaron)
+-- doctor_id y patient_id son auto-increment predecible por orden de INSERT
+-- user_id usa subquery para desacoplar del orden de creación de auth
 -- ============================================================
 
 INSERT INTO appointments_appointment (date, time, status, notes, doctor_id, patient_id, user_id, created_at, updated_at) VALUES
 -- Turnos completados (julio - ya pasaron → tienen evolución)
-('2026-07-02', '09:00:00', 'completed', 'Control cardiológico anual. Paciente asintomático.', 1, 1, 12, '2026-06-28 11:00:00-03', '2026-07-02 09:30:00-03'),
-('2026-07-04', '14:30:00', 'completed', 'Consulta pediátrica de rutina. Niño sano.', 2, 7, 13, '2026-06-29 11:00:00-03', '2026-07-04 15:00:00-03'),
-('2026-07-07', '10:00:00', 'completed', 'Revisión de manchas en piel. Sin hallazgos preocupantes.', 3, 4, 15, '2026-07-01 11:00:00-03', '2026-07-07 10:30:00-03'),
-('2026-07-09', '08:30:00', 'completed', 'Dolor lumbar. Se indica radiografía.', 4, 3, 14, '2026-07-02 11:00:00-03', '2026-07-09 09:00:00-03'),
-('2026-07-11', '07:30:00', 'completed', 'Control presión arterial. Ajuste de medicación.', 5, 5, 16, '2026-07-04 11:00:00-03', '2026-07-11 08:00:00-03'),
-('2026-07-14', '09:00:00', 'completed', 'Seguimiento cardiológico post-tratamiento.', 1, 2, 13, '2026-07-07 11:00:00-03', '2026-07-14 09:30:00-03'),
-('2026-07-21', '10:30:00', 'completed', 'Primera consulta dermatológica.', 8, 1, 12, '2026-07-14 11:00:00-03', '2026-07-21 11:00:00-03'),
+('2026-07-02', '09:00:00', 'completed', 'Control cardiológico anual. Paciente asintomático.', 1, 1, (SELECT id FROM auth_user WHERE username = 'patient1'), '2026-06-28 11:00:00-03', '2026-07-02 09:30:00-03'),
+('2026-07-04', '14:30:00', 'completed', 'Consulta pediátrica de rutina. Niño sano.', 2, 7, (SELECT id FROM auth_user WHERE username = 'patient2'), '2026-06-29 11:00:00-03', '2026-07-04 15:00:00-03'),
+('2026-07-07', '10:00:00', 'completed', 'Revisión de manchas en piel. Sin hallazgos preocupantes.', 3, 4, (SELECT id FROM auth_user WHERE username = 'patient4'), '2026-07-01 11:00:00-03', '2026-07-07 10:30:00-03'),
+('2026-07-09', '08:30:00', 'completed', 'Dolor lumbar. Se indica radiografía.', 4, 3, (SELECT id FROM auth_user WHERE username = 'patient3'), '2026-07-02 11:00:00-03', '2026-07-09 09:00:00-03'),
+('2026-07-11', '07:30:00', 'completed', 'Control presión arterial. Ajuste de medicación.', 5, 5, (SELECT id FROM auth_user WHERE username = 'patient5'), '2026-07-04 11:00:00-03', '2026-07-11 08:00:00-03'),
+('2026-07-14', '09:00:00', 'completed', 'Seguimiento cardiológico post-tratamiento.', 1, 2, (SELECT id FROM auth_user WHERE username = 'patient2'), '2026-07-07 11:00:00-03', '2026-07-14 09:30:00-03'),
+('2026-07-21', '10:30:00', 'completed', 'Primera consulta dermatológica.', 8, 1, (SELECT id FROM auth_user WHERE username = 'patient1'), '2026-07-14 11:00:00-03', '2026-07-21 11:00:00-03'),
 -- Turnos cancelados (julio - no llevan evolución)
-('2026-07-16', '15:00:00', 'cancelled', 'Paciente canceló por motivos personales.', 2, 6, 12, '2026-07-09 11:00:00-03', '2026-07-15 16:00:00-03'),
-('2026-07-23', '11:00:00', 'cancelled', 'Doctor no disponible. Se reprogramó.', 6, 2, 13, '2026-07-16 11:00:00-03', '2026-07-22 10:00:00-03'),
+('2026-07-16', '15:00:00', 'cancelled', 'Paciente canceló por motivos personales.', 2, 6, (SELECT id FROM auth_user WHERE username = 'patient1'), '2026-07-09 11:00:00-03', '2026-07-15 16:00:00-03'),
+('2026-07-23', '11:00:00', 'cancelled', 'Doctor no disponible. Se reprogramó.', 6, 2, (SELECT id FROM auth_user WHERE username = 'patient2'), '2026-07-16 11:00:00-03', '2026-07-22 10:00:00-03'),
 -- Turnos programados (agosto - futuro, no llevan evolución)
-('2026-08-05', '08:00:00', 'scheduled', 'Control de evolución de lesión en rodilla.', 9, 3, 14, '2026-07-26 11:00:00-03', '2026-07-26 11:00:00-03'),
-('2026-08-12', '14:00:00', 'scheduled', 'Consulta clínica general. Chequeo anual.', 10, 4, 15, '2026-07-26 11:00:00-03', '2026-07-26 11:00:00-03');
+('2026-08-05', '08:00:00', 'scheduled', 'Control de evolución de lesión en rodilla.', 9, 3, (SELECT id FROM auth_user WHERE username = 'patient3'), '2026-07-26 11:00:00-03', '2026-07-26 11:00:00-03'),
+('2026-08-12', '14:00:00', 'scheduled', 'Consulta clínica general. Chequeo anual.', 10, 4, (SELECT id FROM auth_user WHERE username = 'patient4'), '2026-07-26 11:00:00-03', '2026-07-26 11:00:00-03');
 
 -- ============================================================
 -- 10. EVOLUCIONES (evolutions_evolution)
@@ -237,3 +239,47 @@ INSERT INTO evolutions_evolution (appointment_id, reason, diagnosis, treatment, 
  'Crema con hidrocortisona 1% por 14 días. Evitar contacto con irritantes.',
  'Se recomienda seguimiento en 30 días si no hay mejoría.',
  '2026-07-21 11:00:00-03');
+
+-- ============================================================
+-- 11. PACIENTES FRANCO PATIENT (victor y maria)
+-- ============================================================
+
+INSERT INTO patients_patient (first_name, last_name, date_of_birth, dni, sex, created_at, updated_at) VALUES
+('Víctor', 'Patient', '1985-05-12', 30123789, 'M', '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03'),
+('María', 'Patient', '1990-09-20', 33456123, 'F', '2026-07-26 10:00:00-03', '2026-07-26 10:00:00-03');
+
+-- ============================================================
+-- 12. VÍNCULOS FRANCO PATIENT → VICTOR Y MARÍA
+-- is_primary=FALSE para ambos
+-- ============================================================
+
+INSERT INTO patients_patientuser (user_id, patient_id, is_primary, role, created_at) VALUES
+((SELECT id FROM auth_user WHERE username = 'francopatient'), 8, FALSE, 'parent', '2026-07-26 10:00:00-03'),
+((SELECT id FROM auth_user WHERE username = 'francopatient'), 9, FALSE, 'parent', '2026-07-26 10:00:00-03');
+
+-- ============================================================
+-- 13. TURNOS FRANCO PATIENT (2 turnos completados con distintos doctores)
+-- doctor_id=1 (Cardiología), doctor_id=2 (Pediatría)
+-- patient_id=8 (Víctor), patient_id=9 (María)
+-- ============================================================
+
+INSERT INTO appointments_appointment (date, time, status, notes, doctor_id, patient_id, user_id, created_at, updated_at) VALUES
+('2026-07-03', '09:30:00', 'completed', 'Consulta cardiología. Dolor en pecho al esfuerzo.', 1, 8, (SELECT id FROM auth_user WHERE username = 'francopatient'), '2026-06-29 11:00:00-03', '2026-07-03 10:00:00-03'),
+('2026-07-10', '14:00:00', 'completed', 'Consulta pediátrica. Fiebre y malestar general.', 2, 9, (SELECT id FROM auth_user WHERE username = 'francopatient'), '2026-07-05 11:00:00-03', '2026-07-10 14:30:00-03');
+
+-- ============================================================
+-- 14. EVOLUCIONES FRANCO PATIENT
+-- appointment_id=12 (Víctor/Cardiología), appointment_id=13 (María/Pediatría)
+-- ============================================================
+
+INSERT INTO evolutions_evolution (appointment_id, reason, diagnosis, treatment, notes, created_at) VALUES
+(12, 'Dolor opresivo en pecho durante ejercicio físico.',
+ 'Dolor torácico de origen musculoesquelético. ECG y ergometría sin alteraciones.',
+ 'Ibuprofeno 400mg c/8hs por 5 días. Evitar esfuerzos intensos por 2 semanas.',
+ 'Paciente refiere mejoría parcial. Se cita para control en 15 días.',
+ '2026-07-03 10:00:00-03'),
+(13, 'Fiebre de 38.5°C desde hace 2 días con malestar general.',
+ 'Infección viral aguda. Leucocitaros en rango normal.',
+ 'Paracetamol 500mg c/6hs si fiebre. Hidratación abundante. Reposo.',
+ 'Sin signos de alarma. Evolución favorable esperada.',
+ '2026-07-10 14:30:00-03');

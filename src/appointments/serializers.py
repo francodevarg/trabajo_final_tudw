@@ -181,16 +181,15 @@ class AppointmentSerializer(serializers.ModelSerializer):
                 }
             )
 
-        daily_count = Appointment.objects.filter(
+        appointment_count = Appointment.objects.filter(
             patient=patient,
-            date=validated_data["date"],
-        ).exclude(status=AppointmentStatus.CANCELLED).count()
+        ).exclude(
+            status=AppointmentStatus.CANCELLED
+        ).count()
 
-        if daily_count >= 3:
+        if appointment_count >= 5:
             raise serializers.ValidationError(
-                {
-                    "patient": "El paciente ya tiene el límite máximo de 3 turnos por día."
-                }
+                "El paciente ya tiene el máximo de 5 turnos activos."
             )
 
         appointment = Appointment.objects.create(

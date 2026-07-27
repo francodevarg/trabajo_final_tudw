@@ -19,7 +19,7 @@ def get_appointments_for_user(user: User) -> QuerySet[Appointment]:
     if user.groups.filter(name="DOCTOR").exists():
         return qs.filter(doctor__user=user)
 
-    return qs.filter(user=user)
+    return qs.filter(patient__user_links__user=user)
 
 
 

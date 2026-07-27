@@ -14,8 +14,8 @@ La aplicación desarrollada es un **Sistema de Gestión de Turnos para una Clini
 
 La documentación del proyecto se encuentra organizada en los siguientes archivos:
 
-- 📖 [**PROJECT.md**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentacion/PROJECT.md): descripción de la arquitectura, organización del proyecto, componentes y funcionamiento interno.
-- 🚀 [**DEPLOY.md**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentacion/DEPLOY.md): guía de instalación, configuración del entorno, despliegue con Docker y comandos útiles.
+- 📖 [**PROJECT.md**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentation/PROJECT.md): descripción de la arquitectura, organización del proyecto, componentes y funcionamiento interno.
+- 🚀 [**DEPLOY.md**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentation/DEPLOY.md): guía de instalación, configuración del entorno, despliegue con Docker y comandos útiles.
 
 ## 🏗️ Arquitectura
 La aplicación está compuesta por una arquitectura distribuida conformada por:
@@ -24,8 +24,3 @@ La aplicación está compuesta por una arquitectura distribuida conformada por:
 - 🧑‍⚕️ **Frontend administrativo/profesional:** interfaz orientada a la administración de la clínica y gestión de profesionales, horarios y turnos. (https://github.com/francodevarg/trabajo_final_tudw_frontend_admin)
 - ⚙️ **Backend Django:** API y lógica de negocio central del sistema. Se encarga de la autenticación, validaciones, gestión de usuarios, turnos y comunicación con la base de datos.
 - 🐘 **PostgreSQL:** base de datos relacional utilizada para almacenar la información del sistema.
-
-
-<p align="center">
-  <img src="./documentation/Arquitecture.svg" alt="Arquitectura del sistema" width="700">
-</p>

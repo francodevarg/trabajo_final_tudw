@@ -7,7 +7,18 @@ from rest_framework.permissions import IsAuthenticated
 from .models import AppointmentStatus
 from .serializers import AppointmentSerializer
 from .services import get_appointments_for_user
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import NotFound
+from .models import Appointment
 
+from appointments.serializers import AppointmentSerializer
+
+from appointments.services import (
+    get_appointments_for_user,
+    AppointmentStatusService
+)
 
 class AppointmentListCreateView(
     generics.ListCreateAPIView
@@ -103,3 +114,135 @@ class AppointmentDetailView(
         return get_appointments_for_user(
             self.request.user
         )
+
+class AppointmentStatusActionView(APIView):
+
+    permission_classes = [
+        IsAuthenticated
+    ]
+
+
+    status = None
+
+
+    def get_role(self, user):
+
+        if user.groups.filter(
+            name="DOCTOR"
+        ).exists():
+
+            return "DOCTOR"
+
+
+        if user.groups.filter(
+            name="ADMIN"
+        ).exists():
+
+            return "ADMIN"
+
+
+        if user.groups.filter(
+            name="PATIENT"
+        ).exists():
+
+            return "PATIENT"
+
+
+        return None
+
+
+
+    def patch(
+        self,
+        request,
+        pk
+    ):
+
+        try:
+
+            appointment = (
+                get_appointments_for_user(
+                    request.user
+                )
+                .get(pk=pk)
+            )
+
+        except Exception:
+
+            raise NotFound(
+                "Appointment not found"
+            )
+
+
+        role = self.get_role(
+            request.user
+        )
+
+
+        appointment = (
+            AppointmentStatusService
+            .change_status(
+                appointment,
+                self.status,
+                role,
+            )
+        )
+
+
+        return Response(
+            AppointmentSerializer(
+                appointment
+            ).data
+        )
+
+
+
+class AppointmentCompleteView(
+    AppointmentStatusActionView
+):
+
+    status = "completed"
+
+
+
+class AppointmentCancelView(
+    AppointmentStatusActionView
+):
+
+    status = "cancelled"
+
+
+
+class AppointmentCheckInView(
+    AppointmentStatusActionView
+):
+
+    status = "checked_in"
+
+
+
+class AppointmentStartView(
+    AppointmentStatusActionView
+):
+
+    status = "in_progress"
+
+
+
+class AppointmentNoShowView(
+    AppointmentStatusActionView
+):
+
+    status = "no_show"
+
+class AppointmentByUserView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AppointmentSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs["user_id"]
+        return Appointment.objects.select_related(
+            "doctor__user",
+            "doctor__specialty",
+            "patient",
+        ).filter(user_id=user_id)

@@ -16,12 +16,12 @@ urlpatterns = [
     path("/insurances", InsuranceListCreateView.as_view(), name="insurance-list-create"),
     path("/insurances/<int:pk>", InsuranceDetailView.as_view(), name="insurance-detail"),
     path(
-        "/<int:pk>/next-available-slot/",
+        "/<int:pk>/next-available-slot",
         DoctorViewSet.as_view({"get": "next_available_slot"}),
         name="doctor-next-available-slot",
     ),
     path(
-        "/<int:pk>/available-slots/",
+        "/<int:pk>/available-slots",
         DoctorViewSet.as_view({"get": "available_slots"}),
         name="doctor-available-slots",
     ),

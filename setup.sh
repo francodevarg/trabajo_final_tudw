@@ -45,6 +45,13 @@ export DEVCONTAINER_USER="vscode"
 echo "Construyendo imagenes..."
 docker compose -f "${ROOT_DIR}/config/docker-compose.yml" up --build -d
 
+echo "Esperando a que el contenedor este listo..."
+sleep 15
+
+echo "Ejecutando seed..."
+docker compose -f "${ROOT_DIR}/config/docker-compose.yml" \
+  exec -w /workspace/src \
+  django_backend python manage.py seed_all
 cat <<EOF
 
 Entorno listo.

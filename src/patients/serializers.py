@@ -1,11 +1,23 @@
 from rest_framework import serializers
 
-from patients.models import Patient
+from patients.models import Patient, PatientUser
 from evolutions.models import Evolution
 
 
-class PatientListSerializer(serializers.ModelSerializer):
+class PatientUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
+    full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PatientUser
+        fields = ("id", "user", "email", "full_name", "is_primary", "role")
+
+    def get_full_name(self, obj):
+        return obj.user.get_full_name() or obj.user.email
+
+
+class PatientListSerializer(serializers.ModelSerializer):
+    users = PatientUserSerializer(source="user_links", many=True, read_only=True)
 
     class Meta:
         model = Patient
@@ -16,9 +28,8 @@ class PatientListSerializer(serializers.ModelSerializer):
             "dni",
             "date_of_birth",
             "sex",
-            "email",
+            "users",
         )
-
 
 
 class PatientHistorySerializer(serializers.ModelSerializer):
@@ -39,5 +50,5 @@ class PatientHistorySerializer(serializers.ModelSerializer):
             "evolution_id",
             "reason",
             "treatment",
-            "notes"
+            "notes",
         )

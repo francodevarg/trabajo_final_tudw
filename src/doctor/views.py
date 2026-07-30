@@ -195,7 +195,11 @@ class SpecialtyDetailView(GenericAPIView, RetrieveModelMixin, UpdateModelMixin, 
 class InsuranceListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
     queryset = Insurance.objects.all()
     serializer_class = InsuranceSerializer
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAuthenticated(), IsAdminRole()]
+        return [AllowAny()]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

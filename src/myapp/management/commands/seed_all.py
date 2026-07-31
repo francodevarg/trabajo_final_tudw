@@ -49,6 +49,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"Error en psql:\n{result.stderr}"))
         else:
             self.stdout.write(self.style.SUCCESS("seed.sql ejecutado correctamente."))
+            call_command("seed_doctor")
 
         self.stdout.write(
             self.style.SUCCESS("All seeds executed successfully.")

@@ -16,6 +16,7 @@ La documentación del proyecto se encuentra organizada en los siguientes archivo
 
 - 📖 [**PROJECT.md**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentation/PROJECT.md): descripción de la arquitectura, organización del proyecto, componentes y funcionamiento interno.
 - 🚀 [**DEPLOY.md**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentation/DEPLOY.md): guía de instalación, configuración del entorno, despliegue con Docker y comandos útiles.
+- 📬 [**API Postman Collection**](https://github.com/francodevarg/trabajo_final_tudw/blob/master/documentation/collections/Postman_Collection.json): colección con todos los endpoints de la API para importar y probar el proyecto en Postman.
 
 ## 🏗️ Arquitectura
 La aplicación está compuesta por una arquitectura distribuida conformada por:

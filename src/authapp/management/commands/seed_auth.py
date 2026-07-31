@@ -8,32 +8,17 @@ from django.core.management.base import BaseCommand
 
 User = get_user_model()
 
-SEED_USERS = [
-    # Doctors (group DOCTOR)
-    {"username": "doctor1", "email": "doctor1@clinica.com", "password": "testpass123", "first_name": "Carlos", "last_name": "Martínez", "group": "DOCTOR"},
-    {"username": "doctor2", "email": "doctor2@clinica.com", "password": "testpass123", "first_name": "María", "last_name": "López", "group": "DOCTOR"},
-    {"username": "doctor3", "email": "doctor3@clinica.com", "password": "testpass123", "first_name": "Roberto", "last_name": "García", "group": "DOCTOR"},
-    {"username": "doctor4", "email": "doctor4@clinica.com", "password": "testpass123", "first_name": "Ana", "last_name": "Rodríguez", "group": "DOCTOR"},
-    {"username": "doctor5", "email": "doctor5@clinica.com", "password": "testpass123", "first_name": "Pedro", "last_name": "Sánchez", "group": "DOCTOR"},
-    {"username": "doctor6", "email": "doctor6@clinica.com", "password": "testpass123", "first_name": "Laura", "last_name": "Fernández", "group": "DOCTOR"},
-    {"username": "doctor7", "email": "doctor7@clinica.com", "password": "testpass123", "first_name": "Miguel", "last_name": "Torres", "group": "DOCTOR"},
-    {"username": "doctor8", "email": "doctor8@clinica.com", "password": "testpass123", "first_name": "Sofía", "last_name": "Díaz", "group": "DOCTOR"},
-    {"username": "doctor9", "email": "doctor9@clinica.com", "password": "testpass123", "first_name": "Jorge", "last_name": "Ruiz", "group": "DOCTOR"},
-    {"username": "doctor10", "email": "doctor10@clinica.com", "password": "testpass123", "first_name": "Lucía", "last_name": "Morales", "group": "DOCTOR"},
-    # Patients (group PATIENT)
-    {"username": "patient1", "email": "patient1@email.com", "password": "testpass123", "first_name": "Juan", "last_name": "Pérez", "group": "PATIENT"},
-    {"username": "patient2", "email": "patient2@email.com", "password": "testpass123", "first_name": "María", "last_name": "González", "group": "PATIENT"},
-    {"username": "patient3", "email": "patient3@email.com", "password": "testpass123", "first_name": "Lucas", "last_name": "Hernández", "group": "PATIENT"},
-    {"username": "patient4", "email": "patient4@email.com", "password": "testpass123", "first_name": "Valentina", "last_name": "López", "group": "PATIENT"},
-    {"username": "patient5", "email": "patient5@email.com", "password": "testpass123", "first_name": "Mateo", "last_name": "Ramírez", "group": "PATIENT"},
-]
-
 
 class Command(BaseCommand):
     help = "Seed auth data"
 
     def _load_permissions(self):
         json_path = os.path.join(os.path.dirname(__file__), "permissions.json")
+        with open(json_path, "r") as f:
+            return json.load(f)
+
+    def _load_users(self):
+        json_path = os.path.join(os.path.dirname(__file__), "users.json")
         with open(json_path, "r") as f:
             return json.load(f)
 
@@ -101,7 +86,7 @@ class Command(BaseCommand):
         self._create_user(settings.USER_DOCTOR, doctor_group)
         self._create_user(settings.USER_PATIENT, patient_group)
 
-        for data in SEED_USERS:
+        for data in self._load_users():
             group_map = {"DOCTOR": doctor_group, "PATIENT": patient_group}
             self._create_user(data, group_map[data["group"]])
 

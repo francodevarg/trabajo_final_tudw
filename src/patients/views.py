@@ -77,6 +77,7 @@ class SetPrimaryPatientView(APIView):
 
 
 class PatientHistoryView(ListAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = PatientHistorySerializer
 
     def get_queryset(self):

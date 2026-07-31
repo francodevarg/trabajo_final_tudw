@@ -21,7 +21,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS("Ejecutando seed.sql..."))
 
         sql_path = os.path.normpath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "seed.sql")
+            os.path.join(settings.BASE_DIR.parent, "config", "seed.sql")
         )
 
         if not os.path.exists(sql_path):

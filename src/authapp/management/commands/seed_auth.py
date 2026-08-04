@@ -39,7 +39,7 @@ class Command(BaseCommand):
         else:
             group.permissions.set(self._get_permissions_by_config(perm_config))
 
-    def _create_user(self, data, group, is_staff=False, is_superuser=False):
+    def _create_user(self, data, group, is_staff=False, is_superuser=False, grant_permissions=None):
         user, created = User.objects.get_or_create(
             email=data["email"],
             defaults={"username": data["username"]},
@@ -55,7 +55,9 @@ class Command(BaseCommand):
 
         user.groups.set([group])
 
-        if is_superuser:
+        if grant_permissions:
+            user.user_permissions.set(self._get_permissions_by_config(grant_permissions))
+        elif is_superuser:
             user.user_permissions.set(self._get_all_permissions())
         else:
             user.user_permissions.clear()
@@ -82,7 +84,11 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS("Creando usuarios..."))
 
-        self._create_user(settings.USER_ADMIN, admin_group, is_staff=True, is_superuser=True)
+        self._create_user(
+            settings.USER_ADMIN, admin_group,
+            is_staff=True, is_superuser=False,
+            grant_permissions=perm_config["ADMIN"],
+        )
         self._create_user(settings.USER_DOCTOR, doctor_group)
         self._create_user(settings.USER_PATIENT, patient_group)
 

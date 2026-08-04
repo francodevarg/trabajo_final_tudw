@@ -11,7 +11,7 @@
   - [HU-P-03 – Cancelar turno reservado](#hu-p-03)
   - [HU-P-04 – Gestionar personas a cargo](#hu-p-04)
   - [HU-P-05 – Consultar profesionales disponibles](#hu-p-05)
-  - [HU-P-06 – Reservar turno](#hu-p-06)
+  - [HU-P-06 – Autenticarse](#hu-p-06)
 
 
 ---

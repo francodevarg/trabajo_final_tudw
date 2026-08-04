@@ -3,3 +3,6 @@ vscode/
 .idea/
 .venv
 __pycache__/
+config/ssl/*.key
+config/nginx/certs/
+config/nginx/default.conf

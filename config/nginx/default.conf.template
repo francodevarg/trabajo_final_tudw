@@ -1,0 +1,23 @@
+server {
+    listen 80 default_server;
+    server_name _;
+
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl default_server;
+    server_name _;
+
+    ssl_certificate     /etc/nginx/certs/__DOMAIN__.crt;
+    ssl_certificate_key /etc/nginx/certs/__DOMAIN__.key;
+
+    location / {
+        proxy_pass http://django_backend:8000;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_redirect off;
+    }
+}

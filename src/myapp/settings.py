@@ -13,8 +13,17 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os 
+APP_MODE = os.environ.get("APP_MODE", "dev")
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
+if APP_MODE == "prod":
+    SECRET_KEY = os.environ["SECRET_KEY"]
+else:
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
+
 USER_ADMIN = {
     "email": os.getenv("USER_ADMIN_EMAIL"),
     "username": os.getenv("USER_ADMIN_USERNAME"),
@@ -45,13 +54,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)jyd*+1o2#@@pwm)jdpgldfez%+m@dw3kqfesv&b)74u#gj!nr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+).split(",")
+
+
+if APP_MODE == "prod":
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    USE_X_FORWARDED_HOST = True
+
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    ""
+).split(",")
 
 APPEND_SLASH = False
 
@@ -91,10 +111,13 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Frontend 1
-    "http://localhost:5174",  # Frontend 2
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ALLOWED_ORIGINS",
+        ""
+    ).split(",")
+    if origin.strip()
 ]
-
 
 ROOT_URLCONF = 'myapp.urls'
 

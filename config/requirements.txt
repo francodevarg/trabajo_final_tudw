@@ -1,7 +1,6 @@
-Django
-psycopg
-django-rest-auth
-djangorestframework
-djangorestframework-simplejwt
-python-dotenv
-django-cors-headers
+Django>=5.2,<6
+psycopg[binary]>=3.2
+djangorestframework>=3.16
+djangorestframework-simplejwt>=5.5
+python-dotenv>=1.0
+django-cors-headers>=4.7
